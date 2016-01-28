@@ -1,0 +1,49 @@
+@import '../variables';
+
+navbar {
+
+  .flex {
+    // display: flex;
+    // justify-content: space-around;
+    align-content: center;
+    height: 70px;
+  }
+
+  .navbar {
+    min-height: 0;
+    border: 0;
+  }
+
+  ul.navbar-nav {
+    display: flex;
+    justify-content: space-between;
+    // align-content: center;
+    margin:0;
+    height: 100%;
+  }
+
+  .nav > li {
+    i {
+      font-size: 24px;
+    }
+    font-family: $font-stack;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border: 1px solid $medium-grey;
+    padding-top: 10px;
+    border-top: 0;
+    border-bottom: 0;
+    border-right: 0;
+    &:first-child {
+      border-left: 0;
+    }
+    &:last-child {
+      border-right: 0;
+    }
+    &:hover, &:active, &.active {
+      background: lighten($rich-blue, 60%);
+    }
+  }
+
+}

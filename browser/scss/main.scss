@@ -1,0 +1,39 @@
+* {
+  box-sizing: border-box;
+}
+
+@import 'variables';
+
+body {
+  background: $dark-blue;
+  padding-bottom: 70px;
+}
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+#main {
+  padding-top: 60px;
+  margin: 0 auto;
+}
+
+/* Font Styles */
+
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+}
+
+p {
+  color: $aqua-blue;
+}
+
+@import 'directives/main';
+@import 'home/main';
+@import 'about/main';
+@import 'tutorial/main';
+@import 'login/main';

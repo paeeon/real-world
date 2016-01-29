@@ -1,0 +1,11 @@
+@import '../variables';
+
+infobar {
+  .navbar-default.navbar {
+    min-height: 0;
+    height: 30px;
+    background-color: darken($dark-blue, 5%);
+    border: 0;
+    margin-bottom: 15px;
+  }
+}

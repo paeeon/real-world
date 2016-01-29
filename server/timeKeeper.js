@@ -1,5 +1,4 @@
 var fireRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
-fireRef.set({ })
 
 var firstName = "lily";
 
@@ -14,17 +13,17 @@ fireRef.child("global").child("messages").on('value', function(data) {
 
 
 
-// event
-function pantsOnFire() {
-  console.log("Hello world");
-}
+// // event
+// function pantsOnFire() {
+//   console.log("Hello world");
+// }
 
-function setPropertyOn() {
-  fireRef.set
-}
+// function setPropertyOn() {
+//   fireRef.set
+// }
 
-var timeGameBegan = Date.now();
+// var timeGameBegan = Date.now();
 
-var events = {
-  5000: pantsOnFire
-};
+// var events = {
+//   5000: pantsOnFire
+// };

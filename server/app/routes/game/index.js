@@ -11,11 +11,7 @@ var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
 var timesLogged = 0;
 
-var startTime = Date.now();
-// var timed = gameInfo.events.timed;
 var gameID, gameRef;
-
-
 
 router.get('/build', function (req, res, next) {
 	gameRef = myFirebaseRef.child('games').push(game.game);
@@ -24,7 +20,7 @@ router.get('/build', function (req, res, next) {
 })
 
 var startTimed = function() {
-	// console.log(gameID)
+
   var startTime = Date.now();
   return setInterval(function(){
 	  var timed = gameInfo.events.timed
@@ -35,7 +31,6 @@ var startTimed = function() {
 	      if(person.type === "text"){
 	        gameRef.child("characters").child(person.index).child("actions").push({eventName:currentEvent.name, action:person.action})
 	      }
-	      // else person.action();
 	    })
 	    gameRef.child("pastEvents").child("timed").push({pastEvent:{
 	      name:currentEvent.name}});

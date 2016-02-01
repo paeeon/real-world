@@ -1,5 +1,40 @@
 var mongoose = require('mongoose');
 
+var goalSchema = new mongoose.Schema({
+  description: {
+    type: String
+  },
+  visibility: {
+    type: Boolean
+  }
+});
+
+var abilitySchema = new mongoose.Schema({
+  description: {
+    type: String
+  },
+  visibility: {
+    type: Boolean
+  },
+  willTrigger: {
+    type: mongoose.Schema.objectId,
+    ref: 'Event'
+  }
+});
+
+var limitationSchema = new mongoose.Schema({
+  description: {
+    type: String
+  },
+  visibility: {
+    type: Boolean
+  },
+  willTrigger: {
+    type: mongoose.Schema.objectId,
+    ref: 'Event'
+  }
+});
+
 var schema = new mongoose.Schema({
   name: {
     type: String
@@ -7,21 +42,18 @@ var schema = new mongoose.Schema({
   position: {
     type: String
   },
-  goals: [{
-    type: mongoose.Schema.ObjectId,
-    ref: "Goal"
-  }],
+  goals: {
+    type: [goalSchema]
+  },
   background: {
     type: String
   },
-  abilities: [{
-    type: mongoose.Schema.ObjectId,
-    ref: "Ability"
-  }],
-  limitations: [{
-    type: mongoose.Schema.ObjectId,
-    ref: "Limitation"
-  }]
+  abilities: {
+    type: [abilitySchema]
+  },
+  limitations: {
+    type: [limitationSchema]
+  }
 });
 
 mongoose.model('Character', schema);

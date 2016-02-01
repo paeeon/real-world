@@ -4,3 +4,4 @@
 require('./user');
 require('./character');
 require('./goal');
+require('./ability');

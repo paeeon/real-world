@@ -121,7 +121,7 @@ router.get('/start', function (req, res, next) {
 })
 
 router.post('/event/:eventId', function(req, res, next){
-	Game.findById(req.params.eventId).exec()
+	Event.findById(req.params.eventId).exec()
 	.then(function(foundEvent){
 		eventHandler[foundEvent.type](foundEvent);
 	}).then(null, next);

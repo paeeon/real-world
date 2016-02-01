@@ -7,24 +7,26 @@ var schema = new mongoose.Schema({
     enum: ['time', 'event', 'character', 'random']
   },
   willTrigger: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Event'
   },
   type: {
-    text: {
+    type: String,
+    enum: ['text', 'choice']
+  },
+  eventThatOccurred: {
+    type: String
+  },
+  decision: {
+    question: {
       type: String
     },
-    decision: {
-      question: {
-        type: String
-      },
-      choices: [{
-        type: String
-      }],
-      willTrigger: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Event'
-      }
+    choices: [{
+      type: String
+    }],
+    willTrigger: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event'
     }
   },
   targets: [{

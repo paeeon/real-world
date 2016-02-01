@@ -7,18 +7,18 @@ var schema = new mongoose.Schema({
   position: {
     type: String
   },
-  goals: {
+  goals: [{
     description: {
       type: String
     },
     visibility: {
       type: Boolean
     }
-  },
+  }],
   background: {
     type: String
   },
-  abilities: {
+  abilities: [{
     description: {
       type: String
     },
@@ -29,8 +29,8 @@ var schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event'
     }
-  },
-  limitations: {
+  }],
+  limitations: [{
     description: {
       type: String
     },
@@ -41,7 +41,7 @@ var schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event'
     }
-  }
+  }]
 });
 
 mongoose.model('Character', schema);

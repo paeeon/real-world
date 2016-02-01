@@ -20,8 +20,11 @@ var game = {
           }]
       }]
   },
+
   characters: [{
+      _id: "12234",
       name: "jerry",
+      goal: "dont die",
       position: "truck driver",
       background: "drives a truck, loves history, and is very interested in valves",
       abilities: [{title: "Presidential Knowledge",
@@ -33,7 +36,9 @@ var game = {
       trigger: "eventID"
       }]
     },{
+      _id:"4321",
       name: "John Mclean",
+      goal: "stop simon gruber",
       position: "Policeman",
       background: "Been at the center of many high leverage hostage situations",
       abilities: [{title: "Badassery",

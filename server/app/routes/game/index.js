@@ -1,11 +1,12 @@
 'use strict';
 var router = require('express').Router();
 // var mongoose = 
-
+var _=require('lodash');
 var Firebase = require('firebase');
 var game = require('./gameInfo.js');
 var gameInfo = game.game;
 var time = Date.now();
+var characters = _.shuffle(gameInfo.characters);
 
 var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
@@ -38,6 +39,19 @@ var startTimed = function() {
 
 	}, 500)
 }
+
+router.post('/register', function(req, res, next){
+	var character;
+	if(characters.length > 0) {
+		character = characters.pop()
+		character.name = req.body.name;
+		res.status(201).json(character);
+	}
+	else{
+		var err = new Error("There is no more room in the game! Sorry!")
+		next(err);
+	}
+})
 
 router.get('/start', function (req, res, next) {
 	startTimed();

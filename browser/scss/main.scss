@@ -25,10 +25,12 @@ body {
 /* Font Styles */
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: $font-stack;
   color: white;
 }
 
-p {
+p, span {
+  font-family: $font-stack;
   color: $aqua-blue;
 }
 

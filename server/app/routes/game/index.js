@@ -51,6 +51,37 @@ router.get('/build', function (req, res, next) {
 	//res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
 })
 
+var eventHandler = {
+	//textEvent example object 
+	// {
+	// 	text: "things to say",
+	// 	title: "title of things to say",
+	// 	characterIds: [characterIds]
+	// }
+	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
+	text : function(textEvent){
+		textEvent.characterIds.forEach(function(id){
+			gameRef.child(id).child("message").push({title:textEvent.title, message:textEvent.text});
+		});
+	},
+
+
+	/*
+	some_choiceEvent = {
+	characterIds: [characterIds],
+	question: "who? what? Where?"
+	choices: [{choice object},{choice object}...]
+	rootEvent: eventId,
+	eventToTrigger: eventId,
+	}
+	*/ 
+	choice: function(choiceEvent){
+		choiceEvent.characterIds.forEach(function(id){
+			gameRef.child(id).child("decisions").push(choiceEvent)
+		})
+	}
+}
+
 var startTimed = function() {
 
   var startTime = Date.now();
@@ -88,5 +119,13 @@ router.get('/start', function (req, res, next) {
 	startTimed();
 	res.status(200).send('game started')
 })
+
+router.post('/event/:eventId', function(req, res, next){
+	Game.findById(req.params.eventId).exec()
+	.then(function(foundEvent){
+		eventHandler[foundEvent.type](foundEvent);
+	}).then(null, next);
+})
+
 
 module.exports = router;

@@ -6,6 +6,9 @@
       <input type="text" ng-model="data.text" />
       <button ng-click="build">Build Game</button><!-- all changes from our Firebase database magically appear here! -->
       <h1>You said: {{ data.text }}</h1>
+      <div ng-repeat="choice in choices">
+      	<button ng-click="choose(choice)">{{choice.$id}}</button>
+      </div>
     </div>
   </div>
 </div>

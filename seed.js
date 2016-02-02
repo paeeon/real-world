@@ -24,6 +24,7 @@ var connectToDb = require('./server/db');
 var User = Promise.promisifyAll(mongoose.model('User'));
 var Event = Promise.promisifyAll(mongoose.model('Event'));
 var Character = Promise.promisifyAll(mongoose.model('Character'));
+var Game = Promise.promisifyAll(mongoose.model('Game'));
 var Char = mongoose.model('Character');
 
 var eventIds;
@@ -435,6 +436,15 @@ function findCharacters(characters) {
     }).then(null, console.log);
 }
 
+var seedGame = function() {
+  var game = {
+    title: 'HIRING DAY!',
+    characters: characterIds,
+    events: eventIds
+  };
+  return Game.createAsync(game);
+};
+
 var seedUsers = function () {
 
     var users = [
@@ -467,7 +477,9 @@ connectToDb.then(function () {
           return event._id;
         });
         console.log('events ids: ', eventIds);
-      }).then(function () {
+        return seedGame();
+      }).then(function(createdgame) {
+        console.log(createdgame)
         console.log(chalk.green('Seed successful!'));
         process.kill(0);
     }).catch(function (err) {

@@ -29,9 +29,11 @@ app.controller('HomeController', function($scope, $firebaseObject, $firebaseArra
 
   //an array of all the choices
   $scope.choices = $firebaseArray(ref);
+  console.log($scope.choices);
 
   //access to the answered key
   $scope.answered = $firebaseObject(decisionRef);
+  console.log($scope.answered);
 
   //three way data binding so that when an answer is chosen, it changes answered to true
   $scope.answered.$bindTo($scope, "answered");

@@ -1,5 +1,6 @@
 app.factory("InstructionFactory", function($http) {
   var extractData = function(response) {
+    console.log(response.data);
     return response.data;
   };
 
@@ -10,10 +11,8 @@ app.factory("InstructionFactory", function($http) {
     },
     buildGameFromInstructions: function(instructionId) {
       return $http.get('/api/game/build/' + instructionId)
-        .then(function(response) {
-          console.log("response is", response);
-          return response.data;
-        });
+        .then(extractData);
     }
   };
+
 });

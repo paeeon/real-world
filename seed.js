@@ -29,6 +29,7 @@ var Char = mongoose.model('Character');
 
 var eventIds;
 var characterIds;
+var characterObj;
 
 var seedCharacters = function() {
   var characters = [
@@ -266,7 +267,23 @@ var seedEvents = function() {
       eventThatOccurred: 'Polling Event –the polling event will put the list of Fullstack students’ names into a poll and allow every user to vote, with Andrew’s vote counting for 3, Mr. Dog’s counting for 2, and everyone else’s counting for 1.',
       decision: {
         question: 'Who would you like to present first?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: characterIds,
       timed: {
@@ -350,7 +367,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who did you think did the best presentation?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: characterIds,
       timed: {
@@ -389,7 +422,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who are your three choices?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: findCharacters(['Mr. Dog']),
       timed: {
@@ -401,7 +450,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who is your choice?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: findCharacters(['Andrew']),
       timed: {
@@ -422,18 +487,15 @@ var seedEvents = function() {
   return Event.createAsync(events);
 };
 function findCharacters(characters) {
-  var promiseArr = [];
+  var charIds = [];
   characters.forEach(function(character) {
-    promiseArr.push(Char.findOne({ name: character }));
-  });
-  Promise.all(promiseArr)
-    .then(function(characterArr) {
-      return characterArr.map(function(character) {
-        return character._id;
+      characterObj.forEach(function(char) {
+        if (char.name === character) {
+          charIds.push(char.id);
+        }
       });
-    }).then(function(charIds) {
-      return charIds;
-    }).then(null, console.log);
+  });
+  return charIds;
 }
 
 var seedGame = function() {
@@ -467,16 +529,19 @@ connectToDb.then(function () {
       .then(function(createdUsers){
         return seedCharacters();
       }).then(function(createdCharacters) {
+        characterObj = createdCharacters.map(function(char) {
+          return {id: char._id, name: char.name};
+        });
         characterIds = createdCharacters.map(function(char) {
           return char._id;
         });
-        console.log('character ids: ', characterIds);
+        // console.log('character ids: ', characterIds);
         return seedEvents();
       }).then(function(createdEvents) {
         eventIds = createdEvents.map(function(event) {
           return event._id;
         });
-        console.log('events ids: ', eventIds);
+        // console.log('events ids: ', eventIds);
         return seedGame();
       }).then(function(createdgame) {
         console.log(createdgame)

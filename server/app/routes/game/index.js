@@ -57,6 +57,7 @@ var eventHandler = {
 	// }
 	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
 	text : function(textEvent){
+
 		textEvent.targets.forEach(function(targetId){
 			gameRef.child(targetId).child("message").push({message:textEvent.eventThatOccurred});
 		});
@@ -82,7 +83,6 @@ var eventHandler = {
 	    })
 	}
 }
-
 
 var startTimed = function() {
 

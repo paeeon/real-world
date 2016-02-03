@@ -18,7 +18,7 @@ var timesLogged = 0;
 
 var gameID, gameRef;
 router.get('/build', function (req, res, next) {
-	Game.find("56b0ec617990997c9e97037a")
+	Game.find("56b0eb7784cfdcefcb8a75e4")
 	.lean()
 	.populate('events')
 	.populate('characters')
@@ -49,7 +49,7 @@ router.get('/build', function (req, res, next) {
 })
 
 var eventHandler = {
-	//textEvent example object 
+	//textEvent example object
 	// {
 	// 	text: "things to say",
 	// 	title: "title of things to say",
@@ -72,13 +72,14 @@ var eventHandler = {
 	rootEvent: eventId,
 	eventToTrigger: eventId,
 	}
-	*/ 
+	*/
 	choice: function(choiceEvent) {
 	    choiceEvent.targets.forEach(function(targetId) {
 	        gameRef.child(targetId).child("decisions").push({
 	            eventId: choiceEvent._id,
 	            message: choiceEvent.eventThatOccurred,
-	            decision: choiceEvent.decision
+	            decision: choiceEvent.decision,
+              answered: false
 	        });
 	    })
 	}
@@ -91,7 +92,7 @@ var startTimed = function() {
 	  var timed = game.events.filter(function(thisEvent){
 	  	return thisEvent.triggeredBy === "time";
 	  }).sort(function(a,b){
-	  	return b.timed.timeout - a.timed.timeout;  
+	  	return b.timed.timeout - a.timed.timeout;
 	  });
 	  console.log(timed)
 	  if (timed.length < 1) return;
@@ -134,4 +135,7 @@ router.post('/event/:eventId', function(req, res, next){
 })
 
 
-module.exports = router;
+module.exports = {
+  router: router,
+  eventHandler: eventHandler
+};

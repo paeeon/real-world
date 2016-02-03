@@ -5,15 +5,16 @@ app.config(function($stateProvider) {
     controller: 'HomeController',
     resolve: {
       allInstructions: function(InstructionFactory) {
-        return InstructionFactory.getAllInstructions()
+        return InstructionFactory.getAllInstructions();
       }
     }
   });
 });
 
-app.controller('HomeController', function($scope, $firebaseObject, $firebaseArray, $state, allInstructions) {
+app.controller('HomeController', function($scope, allInstructions) {
 
-  console.log(allInstructions);
   $scope.allInstructions = allInstructions;
+
+
 
 });

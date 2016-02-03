@@ -266,7 +266,23 @@ var seedEvents = function() {
       eventThatOccurred: 'Polling Event –the polling event will put the list of Fullstack students’ names into a poll and allow every user to vote, with Andrew’s vote counting for 3, Mr. Dog’s counting for 2, and everyone else’s counting for 1.',
       decision: {
         question: 'Who would you like to present first?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: characterIds,
       timed: {
@@ -350,7 +366,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who did you think did the best presentation?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: characterIds,
       timed: {
@@ -389,7 +421,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who are your three choices?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: findCharacters(['Mr. Dog']),
       timed: {
@@ -401,7 +449,23 @@ var seedEvents = function() {
       type: 'choice',
       decision: {
         question: 'Who is your choice?',
-        choices: ['Lily', 'Mike', 'Nicole', 'Student4', 'Student5', 'Student6', 'Student7']
+        choices: [
+          {
+            choice: 'Lily'
+          }, {
+            choice: 'Mike'
+          }, {
+            choice: 'Nicole'
+          }, {
+            choice: 'Student4'
+          }, {
+            choice: 'Student5'
+          }, {
+            choice: 'Student6'
+          }, {
+            choice: 'Student7'
+          }
+        ]
       },
       targets: findCharacters(['Andrew']),
       timed: {

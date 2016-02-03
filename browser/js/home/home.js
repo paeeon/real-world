@@ -6,9 +6,10 @@ app.config(function ($stateProvider) {
     });
 });
 
-app.controller('HomeController', function($scope, $firebaseObject, $firebaseArray, HomeFactory, $state) {
+app.controller('HomeController', function($scope, $firebaseObject, $firebaseArray, HomeFactory, $state) {//
   $scope.build = function(){
     console.log("hi");
+    //we really only want to run build once
       return HomeFactory.buildGame()
       .then(function(){
         $state.go('register');

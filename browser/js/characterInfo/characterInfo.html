@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>{{character.name}}</h1>
+      <h2>Position</h2>
+      <p>{{character.position}}</p>      
+      <h2>Background</h2>
+      <p>{{character.background}}</p>
+      <h2>Goals</h2>
+      <p>{{character.goals}}</p>      
+      <h2>Abilities</h2>
+      <ul>
+        <li ng-repeat="ability character.abilities">{{ability}}</li>
+      </ul>
+      <h2>Limitations</h2>
+      <ul>
+        <li ng-repeat="limitation character.limitations">{{limitation}}</li>
+      </ul>
+      <button ng-click="imReady()">I'm Ready to Start!</button>
+    </div>
+  </div>
+</div>

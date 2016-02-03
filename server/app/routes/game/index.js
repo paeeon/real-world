@@ -11,27 +11,20 @@ var Firebase = require('firebase');
 
 
 console.log("director:", __dirname);
-var time = Date.now();
-var mongoose = require('mongoose');
-var Game = mongoose.model('Game');
 var game, characters;
-Game.find({}).populate('events characters').exec()
-.then(function(games){
-	game = games[0];
-	characters = _.shuffle(game.characters);
-})
-
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
 var timesLogged = 0;
 
 var gameID, gameRef;
 router.get('/build', function (req, res, next) {
-	Game.findById("56b11c9ae12b563810dc78bb")
+	Game.find("56b0ec617990997c9e97037a")
 	.lean()
 	.populate('events')
 	.populate('characters')
 	.then(function(game){
+		console.log(game)
+		game = game;
 		var characterMap = {};
 		var eventMap = {};
 		game.characters.forEach(function(character){
@@ -47,14 +40,12 @@ router.get('/build', function (req, res, next) {
 		game.characters = characterMap;
 		game.events = eventMap;
 		// console.log("GAME IS", game);
+		characters = _.shuffle(game.characters);
 		gameRef = myFirebaseRef.child('games').push(game);
 		gameID = gameRef.key();
-		// console.log("ID IS", gameID);
-		res.json(game);
+		console.log("ID IS", gameID);
+		res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
 	})
-	gameRef = myFirebaseRef.child('games').push({title:game.title});
-	gameID = gameRef.key();
-	res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
 })
 
 var eventHandler = {
@@ -114,12 +105,15 @@ var startTimed = function() {
 	}, 500)
 }
 
+// var sessionsIds = [];
+// we should put in a safeguard when we launch to disallow a user from loggin in twice!
 router.post('/register', function(req, res, next){
 	var character;
 	if(characters.length > 0) {
 		character = characters.pop()
 		character.name = req.body.name;
-		res.status(201).json(character);
+		sessionsIds.push(req.session)
+		res.status(201).json({_id:character._id});
 	}
 	else{
 		var err = new Error("There is no more room in the game! Sorry!")

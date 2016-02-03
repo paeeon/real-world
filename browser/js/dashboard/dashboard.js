@@ -4,16 +4,16 @@ app.config(function ($stateProvider) {
         templateUrl: 'js/dashboard/dashboard.html',
         controller: 'DashBoardController',
         resolve: {
-          user: function($stateParams) {
-            return $stateParams.userName;
+          character: function($stateParams, characterFactory) {
+            return characterFactory.getCharacter($stateParams._id);
           }
         }
     });
 });
 
-app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, user) {
+app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character) {
   // var ref = new Firebase('https://popping-heat-9764.firebaseio.com/');
-
+  $scope.character = character;
   var ref = new Firebase('https://character-test.firebaseio.com');
   var decisionRef = new Firebase('https://character-test.firebaseio.com/Andrew/Decision/answered');
 
@@ -49,6 +49,7 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   //the function that is called when a choice is chosen, so that the corresponding reaction function can be called
   $scope.choose = function(choice) {
     console.log(choice.$value);
+    if (choice.eventToTrigger) eventFactory.triggerEvent(choice.eventToTrigger)
     $scope.answered.$value = true;
     return choice.$value;
   }

@@ -24,6 +24,8 @@ var schema = new mongoose.Schema({
     choices: [{
       type: String
     }],
+    // will trigger should be also be an option associated with a choice
+    //in addition to being associated with an event
     willTrigger: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event'

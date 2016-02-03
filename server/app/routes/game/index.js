@@ -8,19 +8,24 @@ var Event = mongoose.model('Event');
 // Game.plugin(deepPopulate);
 var _=require('lodash');
 var Firebase = require('firebase');
-// var game = require('./gameInfo.js');
+
 
 console.log("director:", __dirname);
-// var gameInfo = game.game;
 var time = Date.now();
-// var characters = _.shuffle(gameInfo.characters);
+var mongoose = require('mongoose');
+var Game = mongoose.model('Game');
+var game, characters;
+Game.find({}).populate('events characters').exec()
+.then(function(games){
+	game = games[0];
+	characters = _.shuffle(game.characters);
+})
 
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
 var timesLogged = 0;
 
 var gameID, gameRef;
-
 router.get('/build', function (req, res, next) {
 	Game.findById("56b11c9ae12b563810dc78bb")
 	.lean()
@@ -47,8 +52,9 @@ router.get('/build', function (req, res, next) {
 		// console.log("ID IS", gameID);
 		res.json(game);
 	})
-	// 
-	//res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
+	gameRef = myFirebaseRef.child('games').push({title:game.title});
+	gameID = gameRef.key();
+	res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
 })
 
 var eventHandler = {
@@ -60,8 +66,8 @@ var eventHandler = {
 	// }
 	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
 	text : function(textEvent){
-		textEvent.characterIds.forEach(function(id){
-			gameRef.child(id).child("message").push({title:textEvent.title, message:textEvent.text});
+		textEvent.targets.forEach(function(targetId){
+			gameRef.child(targetId).child("message").push({message:textEvent.eventThatOccurred});
 		});
 	},
 
@@ -75,26 +81,32 @@ var eventHandler = {
 	eventToTrigger: eventId,
 	}
 	*/ 
-	choice: function(choiceEvent){
-		choiceEvent.characterIds.forEach(function(id){
-			gameRef.child(id).child("decisions").push(choiceEvent)
-		})
+	choice: function(choiceEvent) {
+	    choiceEvent.targets.forEach(function(targetId) {
+	        gameRef.child(targetId).child("decisions").push({
+	            eventId: choiceEvent._id,
+	            message: choiceEvent.eventThatOccurred,
+	            decision: choiceEvent.decision
+	        });
+	    })
 	}
 }
+
 
 var startTimed = function() {
 
   var startTime = Date.now();
   return setInterval(function(){
-	  var timed = gameInfo.events.timed
+	  var timed = game.events.filter(function(thisEvent){
+	  	return thisEvent.triggeredBy === "time";
+	  }).sort(function(a,b){
+	  	return b.timed.timeout - a.timed.timeout;  
+	  });
+	  console.log(timed)
 	  if (timed.length < 1) return;
-	  if(Date.now() - startTime >= timed[timed.length-1].time){
+	  if(Date.now() - startTime >= timed[timed.length-1].timed.timeout){
 	    var currentEvent = timed.pop();
-	    currentEvent.effect.forEach(function(person){
-	      if(person.type === "text"){
-	        gameRef.child("characters").child(person.index).child("actions").push({eventName:currentEvent.name, action:person.action})
-	      }
-	    })
+	    eventHandler[currentEvent.type](currentEvent)
 	    gameRef.child("pastEvents").child("timed").push({pastEvent:{
 	      name:currentEvent.name}});
 	  }

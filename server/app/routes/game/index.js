@@ -16,7 +16,8 @@ router.get('/', function(req, res, next) {
     .then(null, next);
 });
 
-var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
+var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
+// var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var game, characters, gameID, gameRef;
 
 router.get('/build/:instructionId', function(req, res, next) {
@@ -50,66 +51,70 @@ router.get('/build/:instructionId', function(req, res, next) {
     })
 });
 
+
 var eventHandler = {
-  //textEvent example object
-  // {
-  //  text: "things to say",
-  //  title: "title of things to say",
-  //  characterIds: [characterIds]
-  // }
-  // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
-  text: function(textEvent) {
+	//textEvent example object
+	// {
+	// 	text: "things to say",
+	// 	title: "title of things to say",
+	// 	characterIds: [characterIds]
+	// }
+	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
+	text : function(textEvent){
+		console.log(gameRef)
+		textEvent.targets.forEach(function(targetId){
+			targetId = targetId.toString();
+			gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
+		});
+	},
 
-    textEvent.targets.forEach(function(targetId) {
-      gameRef.child(targetId).child("message").push({
-        message: textEvent.eventThatOccurred
-      });
-    });
-  },
 
+	/*
+	some_choiceEvent = {
+	characterIds: [characterIds],
+	question: "who? what? Where?"
+	choices: [{choice object},{choice object}...]
+	rootEvent: eventId,
+	eventToTrigger: eventId,
+	}
+	*/
+	choice: function(choiceEvent) {
+	    choiceEvent.targets.forEach(function(targetId) {
+					targetId = targetId.toString();
+	        gameRef.child('characters').child(targetId).child("decisions").push({
+	            eventId: choiceEvent._id,
+	            message: choiceEvent.eventThatOccurred || "",
+	            decision: choiceEvent.decision,
+              answered: false
+	        });
+	    })
+	}
 
-  /*
-  some_choiceEvent = {
-  characterIds: [characterIds],
-  question: "who? what? Where?"
-  choices: [{choice object},{choice object}...]
-  rootEvent: eventId,
-  eventToTrigger: eventId,
-  }
-  */
-  choice: function(choiceEvent) {
-    choiceEvent.targets.forEach(function(targetId) {
-      gameRef.child(targetId).child("decisions").push({
-        eventId: choiceEvent._id,
-        message: choiceEvent.eventThatOccurred,
-        decision: choiceEvent.decision
-      });
-    })
-  }
 }
 
 var startTimed = function() {
 
   var startTime = Date.now();
-  return setInterval(function() {
-    var timed = game.events.filter(function(thisEvent) {
-      return thisEvent.triggeredBy === "time";
-    }).sort(function(a, b) {
-      return b.timed.timeout - a.timed.timeout;
-    });
-    console.log(timed)
-    if (timed.length < 1) return;
-    if (Date.now() - startTime >= timed[timed.length - 1].timed.timeout) {
-      var currentEvent = timed.pop();
-      eventHandler[currentEvent.type](currentEvent)
-      gameRef.child("pastEvents").child("timed").push({
-        pastEvent: {
-          name: currentEvent.name
-        }
-      });
-    }
+  	var timed = []
+  	Object.keys(game.events).forEach(function(eventKey){
+  		if(game.events[eventKey].triggeredBy === "time") {
+  			timed.push(game.events[eventKey]);
+  		}
+  	});
 
-  }, 500)
+	  timed.sort(function(a,b){
+	  	return b.timed.timeout - a.timed.timeout;
+	  });
+  return setInterval(function(){
+	  if (timed.length < 1) return;
+	  if(Date.now() - startTime >= timed[timed.length-1].timed.timeout){
+	    var currentEvent = timed.pop();
+	    eventHandler[currentEvent.type](currentEvent)
+	    gameRef.child("pastEvents").child("timed").push({pastEvent:{
+	      name:currentEvent.eventThatOccurred || ""}});
+	  }
+
+	}, 500)
 }
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
@@ -139,5 +144,8 @@ router.post('/event/:eventId', function(req, res, next) {
     }).then(null, next);
 })
 
-
-module.exports = router;
+require('./vote-listening.js')
+module.exports = {
+  router: router,
+  eventHandler: eventHandler
+};

@@ -22,14 +22,14 @@ var schema = new mongoose.Schema({
       type: String
     },
     choices: [{
-      type: String
-    }],
-    // will trigger should be also be an option associated with a choice
-    //in addition to being associated with an event
-    willTrigger: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Event'
-    }
+      choice: {
+        type: String
+      },
+      willTrigger: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event'
+      }
+    }]
   },
   targets: [{
     type: mongoose.Schema.ObjectId,

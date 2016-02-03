@@ -14,8 +14,8 @@ app.config(function ($stateProvider) {
 app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character) {
   // var ref = new Firebase('https://popping-heat-9764.firebaseio.com/');
   $scope.character = character;
-  var ref = new Firebase('https://character-test.firebaseio.com');
-  var decisionRef = new Firebase('https://character-test.firebaseio.com/Andrew/Decision/answered');
+  var gameRef = new Firebase('https://flickering-inferno-4436.firebaseio.com/');
+  var decisionRef = new Firebase('https://flickering-inferno-4436.firebaseio.com/characters/' + $scope.character._id + '/decisions');
 
   // Download the data into a local object
   // var syncObject = $firebaseObject(ref);
@@ -36,21 +36,25 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   console.log(ref);
 
   //an array of all the choices
-  $scope.choices = $firebaseArray(ref);
+  $scope.choices = $firebaseArray(decisionRef);
   console.log($scope.choices);
 
-  //access to the answered key
-  $scope.answered = $firebaseObject(decisionRef);
-  console.log($scope.answered);
+  //
+  $scope.currentChoice = $scope.choices[$scope.choices.length - 1];
 
-  //three way data binding so that when an answer is chosen, it changes answered to true
-  $scope.answered.$bindTo($scope, "answered");
+  // //access to the answered key
+  // $scope.answered = $firebaseObject(decisionRef);
+  // console.log($scope.answered);
+  //
+  // //three way data binding so that when an answer is chosen, it changes answered to true
+  // $scope.answered.$bindTo($scope, "answered");
 
   //the function that is called when a choice is chosen, so that the corresponding reaction function can be called
   $scope.choose = function(choice) {
-    console.log(choice.$value);
-    if (choice.eventToTrigger) eventFactory.triggerEvent(choice.eventToTrigger)
-    $scope.answered.$value = true;
-    return choice.$value;
-  }
+    // if (choice.willTrigger) eventFactory.triggerEvent(choice.willTrigger);
+    choice.eventId = $scope.currentChoice.eventId
+    gameRef.child('votes').child($scope.currentChoice.eventId).push(choice)
+    $scope.currentChoice.answered = true;
+    // return choice.$value;
+  };
 });

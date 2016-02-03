@@ -5,8 +5,13 @@
       <!-- anything typed in here is magically saved to our Firebase database! -->
       <input type="text" ng-model="data.text" />
       <h1>You said: {{ data.text }}</h1>
-      <div ng-repeat="choice in choices">
-      	<button ng-click="choose(choice)">{{choice.$id}}</button>
+      <div ng-hide="currentChoice.answered">
+        <h2>{{ currentChoice.message }}</h2>
+        <h3>{{ currentChoice.decision.question }}</h3>
+      	<button ng-repeat="choice in currentChoice.decision.choices"
+          ng-click="choose(choice)">
+          {{ choice.choice }}
+        </button>
       </div>
     </div>
   </div>

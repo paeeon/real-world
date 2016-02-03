@@ -1,6 +1,6 @@
 app.config(function ($stateProvider) {
     $stateProvider.state('characterInfo', {
-        url: '/',
+        url: '/characterInfo',
         templateUrl: 'js/characterInfo/characterInfo.html',
         resolve:{
         	character: function($stateParams, characterFactory) {

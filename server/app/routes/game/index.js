@@ -4,8 +4,6 @@ var mongoose = require('mongoose');
 var Game = mongoose.model('Game');
 var Character = mongoose.model('Character');
 var Event = mongoose.model('Event');
-// var deepPopulate = require('mongoose-deep-populate')(mongoose);
-// Game.plugin(deepPopulate);
 var _=require('lodash');
 var Firebase = require('firebase');
 // var game = require('./gameInfo.js');
@@ -15,14 +13,22 @@ console.log("director:", __dirname);
 var time = Date.now();
 // var characters = _.shuffle(gameInfo.characters);
 
+router.get('/', function(req, res, next) {
+  Game.find({})
+    .then(games => {
+      res.status(200).json(games);
+    })
+    .then(null, next);
+});
+
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
 var timesLogged = 0;
 
 var gameID, gameRef;
 
-router.get('/build', function (req, res, next) {
-	Game.findById("56b11c9ae12b563810dc78bb")
+router.get('/build/:instructionId', function (req, res, next) {
+	Game.findById(req.params.instructionId)
 	.lean()
 	.populate('events')
 	.populate('characters')
@@ -47,9 +53,9 @@ router.get('/build', function (req, res, next) {
 		// console.log("ID IS", gameID);
 		res.json(game);
 	})
-	// 
+	//
 	//res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
-})
+});
 
 var startTimed = function() {
 
@@ -87,6 +93,6 @@ router.post('/register', function(req, res, next){
 router.get('/start', function (req, res, next) {
 	startTimed();
 	res.status(200).send('game started')
-})
+});
 
 module.exports = router;

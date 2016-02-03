@@ -5,3 +5,4 @@ require('./user');
 require('./character');
 require('./event');
 require('./game');
+require('./player');

@@ -502,7 +502,8 @@ var seedGame = function() {
   var game = {
     title: 'HIRING DAY!',
     characters: characterIds,
-    events: eventIds
+    events: eventIds,
+    overview: "A simulation of Fullstack Academy’s Hiring Day. The function of the game is to help students to better understand the different motivations of everyone present on Hiring Day and learn how to make Hiring Day go best for everyone."
   };
   return Game.createAsync(game);
 };

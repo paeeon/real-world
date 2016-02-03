@@ -7,7 +7,7 @@ app.config(function ($stateProvider) {
 });
 
 app.controller('regController', function($scope, $http, $state){
-	$scope.start = function(){
+	$scope.joinGame = function(){
 		$http.post('api/game/register', {name:$scope.data.text})
 			.then(function(response){
 				$state.go('characterInfo', response.data)

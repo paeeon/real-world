@@ -4,6 +4,7 @@ module.exports = router;
 
 router.use('/members', require('./members'));
 router.use('/game', require('./game'));
+router.use('/players', require('./players'));
 router.use('/character', require('./character'));
 // Make sure this is after all of
 // the registered routes!

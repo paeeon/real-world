@@ -6,22 +6,26 @@ app.config(function ($stateProvider) {
     });
 });
 
-app.controller('HomeController', function($scope, $firebaseObject, $http, $state) {
-  // var ref = new Firebase('https://popping-heat-9764.firebaseio.com/');
-
-  // Download the data into a local object
-  // var syncObject = $firebaseObject(ref);
-  // P.S. ^ You could also do something like this:
-  // $firebaseObject(ref.child('profiles').child('physicsmarie'));
-
-  // Synchronize the object with three-way binding
-  // syncObject.$bindTo($scope, "data");
-  // The database will now have a key 'text' with associated value of
-  // whatever is typed into the input array in the home view.
+app.controller('HomeController', function($scope, $firebaseObject, $firebaseArray, HomeFactory, $state) {
   $scope.build = function(){
-    $http.get('/api/game/build').then(function(response){
-      console.log(response.data);
-      $state.go('register');
-    })
+    console.log("hi");
+      return HomeFactory.buildGame()
+      .then(function(){
+        $state.go('register');
+      })
+      .then(null,console.error);
   }
+
 });
+
+app.factory('HomeFactory', function($http) {
+  return {
+    buildGame : function () {
+      return $http.get('api/game/build')
+      .then(function(response){
+        console.log("response is", response);
+        return response.data;
+      })
+    }
+  }
+})

@@ -1,6 +1,6 @@
 app.config(function ($stateProvider) {
-    $stateProvider.state('registerChar', {
-        url: '/',
+    $stateProvider.state('register', {
+        url: '/register',
         templateUrl: 'js/registerChar/registerChar.html',
         controller: 'regController'
     });

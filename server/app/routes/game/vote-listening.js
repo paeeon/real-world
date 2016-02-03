@@ -1,17 +1,23 @@
-var voteRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/votes");
+var voteRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/K9cpfp9AxxsXHgEgFl_/votes");
+var mongoose = require('mongoose');
 var Event = mongoose.model('Event');
+var i = 0;
+voteRef.on('child_added', function(childSnapshot, prevChildKey) {
 
-voteRef.on('child-added', function(childSnapshot, prevChildKey) {
   var eventHandler = require('./index').eventHandler;
-  // array of obj --> [{choice: ..., willTrigger: ...}]
+  // // array of obj --> [{choice: ..., willTrigger: ...}]
+  i++;
   var currentVote = childSnapshot.val();
-  var parent = childSnapshot.parent().val();
-  var parentKeys = Object.keys(parent);
+  // // console.log(currentVote)
+  var parent = voteRef.child(childSnapshot.key());
+
+  var eventId = "56b0ec617990997c9e970374"
+  // var parentKeys = Object.keys(parent);
   var votes = {};
-  Event.findById(currentVote.eventId).exec()
+  Event.findById(eventId).exec()
   .then(function(currentEvent) {
-    if (parentKeys.length === currentEvent.targets.length) {
-      parentKeys.forEach(function(vote) {
+    if (childSnapshot.numChildren() === currentEvent.targets.length) {
+      childSnapshot.forEach(function(vote) {
         var choice = parent.vote.choice;
         if (!votes[choice]) {
           votes[choice] = 1;
@@ -28,12 +34,15 @@ voteRef.on('child-added', function(childSnapshot, prevChildKey) {
           winningVote = votes.vote;
         }
       }
+    // var eventToTrigger = votes.winningVote.eventId.willTrigger;
     });
-    var eventToTrigger = votes.winningVote.eventId.willTrigger;
-    return eventToTrigger;
+    return "56b0ec617990997c9e970374";
   }).then(function(toTrigger) {
     return Event.findById(toTrigger).exec();
   }).then(function(eventToTrigger) {
+    // console.log(eventToTrigger)
+    // console.log(eventHandler.text)
     eventHandler[eventToTrigger.type](eventToTrigger);
+
   });
 });

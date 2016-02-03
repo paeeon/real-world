@@ -12,7 +12,7 @@ var Firebase = require('firebase');
 
 console.log("director:", __dirname);
 var game, characters;
-var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
+var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var namesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/names");
 var timesLogged = 0;
 

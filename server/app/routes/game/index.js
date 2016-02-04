@@ -35,38 +35,56 @@ router.get('/build/:instructionId', function(req, res, next) {
 	      //console.log("character:", character);
 	      characterMap[character._id] = character;
 	    })
-	    var choiceEvents = {}
+	    var choiceEvents = {};
+      var resolve = {};
 	    game.events.forEach(function(event) {
 		    event.targets = event.targets.map(function(target){
 		    	return target.toString();
-		    })
+		    });
 	      eventMap[event._id] = event;
-
 	      if(event.type === "choice") {
 	      	choiceEvents[event._id] = {targets:event.targets};
+          if (event.needsResolution) {
+            var id = event._id.toString();
+            resolve[id] = 'replace';
+          }
 	      }
-	    })
+
+	    });
 	    game.votes = choiceEvents;
 	    console.log("character map is", characterMap);
 	    game.characters = characterMap;
 	    game.events = eventMap;
+      game.resolveTable = resolve;
 	    // console.log("GAME IS", game);
 	    characters = _.shuffle(game.characters);
 	    gameRef = myFirebaseRef.child('games').push(game);
 	    gameID = gameRef.key();
 	    console.log("ID IS", gameID);
 	    res.json(gameID);
-	  }).then(null, console.log)
+	  }).then(null, console.log);
 });
 
+var resolveEvent = function(eventToResolve) {
+  gameRef.child('resolveTable').child(eventToResolve._id.toString())
+    .once('value', function(snapshot) {
+      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val());
+      textEvents(eventToResolve);
+    });
+};
+
+function textEvents(textEvent) {
+  textEvent.targets.forEach(function(targetId){
+    targetId = targetId.toString();
+    gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
+  });
+}
 
 var eventHandler = {
 	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
 	text : function(textEvent){
-		textEvent.targets.forEach(function(targetId){
-			targetId = targetId.toString();
-			gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
-		});
+    if (textEvent.needsResolution) resolveEvent(textEvent);
+    else textEvents(textEvent);
 	},
 
 	// pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
@@ -79,7 +97,7 @@ var eventHandler = {
 	            decision: choiceEvent.decision,
               answered: false
 	        });
-	    })
+	    });
 	}
 
 }

@@ -10,6 +10,9 @@ var schema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Event'
   },
+  needsResolution: {
+    type: Boolean
+  },
   type: {
     type: String,
     enum: ['text', 'choice']
@@ -18,6 +21,10 @@ var schema = new mongoose.Schema({
     type: String
   },
   decision: {
+    willResolve: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Event'
+    },
     question: {
       type: String
     },

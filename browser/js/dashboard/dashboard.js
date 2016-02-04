@@ -1,6 +1,6 @@
 app.config(function ($stateProvider) {
     $stateProvider.state('dashboard', {
-        url: '/dashboard/:userName',
+        url: 'games/:gameId/character/:characterId/dashboard/',
         templateUrl: 'js/dashboard/dashboard.html',
         controller: 'DashBoardController',
         resolve: {

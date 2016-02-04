@@ -1,8 +1,12 @@
-app.factory('characterFactory', function($http){
+app.factory('characterFactory', function($http, $firebaseObject, $firebaseArray){
 	var characterFactory = {};
-	characterFactory.getCharacter = function (characterID){
-		$http.get('/api/character/' + characterID)
-		.then(null, next)
+	characterFactory.getCharacter = function(gameId, characterId) {
+		var charRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId + "/characters/" + characterId);
+    return $firebaseObject(charRef).$loaded()
+      .then(function(character) {
+        // console.log(character);
+        return character;
+      });
 	};
 
   characterFactory.joinGame = function(gameToAddCharacterTo, name, phone){
@@ -11,5 +15,18 @@ app.factory('characterFactory', function($http){
         return response.data;
       });
   };
+
+  characterFactory.allCharacters = function(gameId) {
+    var allCharRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId + "/characters");
+     return $firebaseArray(allCharRef).$loaded()
+     .then(function(characters){
+        return characters;
+     })
+  }
+
+  // characterFactory.numPlayersInGame = function(gameId) {
+
+  // }
+
 	return characterFactory;
 })

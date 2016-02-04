@@ -1,22 +1,37 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <h1>{{character.name}}</h1>
-      <h2>Position</h2>
-      <p>{{character.position}}</p>      
-      <h2>Background</h2>
+
+      <p>Your character will be…</p>
+
+      <h2>{{character.name}}</h2>
+      <hr>
+
+      <h4>Position</h4>
+      <p>{{character.position}}</p>
+      <h4>Background</h4>
       <p>{{character.background}}</p>
-      <h2>Goals</h2>
-      <p>{{character.goals}}</p>      
-      <h2>Abilities</h2>
-      <ul>
-        <li ng-repeat="ability character.abilities">{{ability}}</li>
+      <h4>Goals</h4>
+      <ul class="list-light">
+        <li ng-repeat="goal in character.goals">{{goal.description}}</li>
       </ul>
-      <h2>Limitations</h2>
-      <ul>
-        <li ng-repeat="limitation character.limitations">{{limitation}}</li>
+      <h4>Abilities</h4>
+      <ul class="list-light">
+        <li ng-repeat="ability in character.abilities">{{ability.description}}</li>
       </ul>
-      <button ng-click="imReady()">I'm Ready to Start!</button>
+      <h4>Limitations</h4>
+
+      <ul class="list-light">
+        <li ng-repeat="limitation in character.limitations">{{limitation.description}}</li>
+      </ul>
+
+      <button class="btn btn-primary btn-block" ng-click="imReady()" ng-hide="ready">I'm Ready to Start!</button>
+      <div class="waiting-screen text-center" ng-show="ready">
+        <!-- <span us-spinner="{radius:30, width:8, length: 16, color: 'white'}"></span> -->
+        <h4 class="waiting-message text-center">Waiting for game to start…</h4><br>
+        <h4 class="ready-characters text-center">{{numPlayersJoined}}/{{numCharacters}} characters ready</h4>
+      </div>
+      <div class="dim" ng-show="ready"></div>
     </div>
   </div>
 </div>

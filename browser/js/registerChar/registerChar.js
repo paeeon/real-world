@@ -1,6 +1,6 @@
 app.config(function($stateProvider) {
   $stateProvider.state('register', {
-    url: '/register/:gameId',
+    url: '/games/:gameId/register',
     templateUrl: 'js/registerChar/registerChar.html',
     controller: 'regController'
   });
@@ -28,10 +28,10 @@ app.controller('regController', function($scope, $http, $state, characterFactory
 
   $scope.joinGame = function() {
     characterFactory.joinGame($stateParams.gameId, $scope.player.name, $scope.player.phoneNumber)
-      .then(function(characterId) {
+      .then(function(character) {
         console.log("regController joinGame");
-        console.log(characterId);
-        // $state.go('characterInfo', response.data)
+        console.log(character);
+        $state.go('characterInfo', { gameId: $stateParams.gameId, characterId: character._id });
       })
   };
 

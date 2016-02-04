@@ -1,6 +1,5 @@
 app.factory('eventFactory', function($http) {
   var extractData = function(response) {
-    console.log(response.data);
     return response.data;
   };
 
@@ -11,4 +10,4 @@ app.factory('eventFactory', function($http) {
   }
 
   return eventFactory;
-})
+});

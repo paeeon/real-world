@@ -1,0 +1,28 @@
+@import '../variables';
+.list-unstyled.list-light {
+  color: $aqua-blue;
+}
+
+.waiting-screen {
+  position: fixed;
+  top: 20%;
+  width: 400px;
+  left: 50%;
+  margin-left: -200px; /* Half of the width */
+  z-index: 6;
+  .waiting-message,
+  .ready-characters {
+    color: $aqua-blue;
+    z-index: 6;
+  }
+}
+
+.dim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+}

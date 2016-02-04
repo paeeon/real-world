@@ -1,4 +1,4 @@
-var gamesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/games/");
+var gamesRef = new Firebase("https://character-test.firebaseio.com/games/");
 var voteRef = gamesRef.child("-K9hE8L_Y2NAxvi8x06R").child('votes');
 var mongoose = require('mongoose');
 var Event = mongoose.model('Event');
@@ -19,7 +19,7 @@ voteRef.on('child_changed', function(childSnapshot, prevChildKey) {
       parentRef.once('value', function(parentSnap){
         parent = parentSnap.val()
       });
-      // console.log(parent) 
+      // console.log(parent)
       childSnapshot.forEach(function(snapshot) {
         var vote = snapshot.val();
         if(vote.choice){

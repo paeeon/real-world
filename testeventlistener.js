@@ -1,6 +1,6 @@
 var Firebase = require('firebase');
 
-var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
+var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 
 gameId = "-K9hE8L_Y2NAxvi8x06R"
 testEvent = {

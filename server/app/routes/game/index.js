@@ -16,12 +16,11 @@ router.get('/', function(req, res, next) {
     .then(null, next);
 });
 
-var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
-// var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
+// var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
+var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var game, characters, gameID, gameRef;
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
-
 
 router.get('/build/:instructionId', function(req, res, next) {
 	Game.findById(req.params.instructionId)
@@ -56,7 +55,7 @@ router.get('/build/:instructionId', function(req, res, next) {
 	    gameRef = myFirebaseRef.child('games').push(game);
 	    gameID = gameRef.key();
 	    console.log("ID IS", gameID);
-	    res.status(200).send('game built  <a href="/api/game/start">click to start </a>')
+	    res.json(gameID);
 	  }).then(null, console.log)
 });
 
@@ -69,6 +68,7 @@ var eventHandler = {
 			gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
 		});
 	},
+
 	// pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
 	choice: function(choiceEvent) {
 	    choiceEvent.targets.forEach(function(targetId) {
@@ -110,19 +110,23 @@ var startTimed = function() {
 }
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
-router.post('/register', function(req, res, next) {
-  var character;
-  if (characters.length > 0) {
-    character = characters.pop()
-    character.name = req.body.name;
-    res.status(201).json({
-      _id: character._id
-    });
-  } else {
-    var err = new Error("There is no more room in the game! Sorry!")
-    next(err);
-  }
-})
+router.post('/:gameId/register-character', function(req, res, next){
+	var character;
+
+  // characters is a shuffled array of all the characters in this game
+  // If there are characters to fill (that have not been assigned),
+	if (characters.length > 0) {
+    character = characters.pop();
+    console.log("GAME ID IS", gameID);
+    console.log("._ID", character._id);
+    myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({"playerName": req.body.playerName, "playerNumber": req.body.playerNumber});
+		res.status(201).json({_id:character._id});
+	}
+	else {
+		var err = new Error("There is no more room in the game! Sorry!");
+		next(err);
+	}
+});
 
 router.get('/start', function(req, res, next) {
   startTimed();

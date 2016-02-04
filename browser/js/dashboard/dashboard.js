@@ -1,6 +1,6 @@
 app.config(function ($stateProvider) {
     $stateProvider.state('dashboard', {
-        url: '/dashboard/:userName',
+        url: 'games/:gameId/character/:characterId/dashboard/',
         templateUrl: 'js/dashboard/dashboard.html',
         controller: 'DashBoardController',
         resolve: {
@@ -14,8 +14,8 @@ app.config(function ($stateProvider) {
 app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character) {
   // var ref = new Firebase('https://popping-heat-9764.firebaseio.com/');
   $scope.character = character;
-  var gameRef = new Firebase('https://flickering-inferno-4436.firebaseio.com/');
-  var decisionRef = new Firebase('https://flickering-inferno-4436.firebaseio.com/characters/' + $scope.character._id + '/decisions');
+  var gameRef = new Firebase('https://character-test.firebaseio.com/');
+  var decisionRef = new Firebase('https://character-test.firebaseio.com/characters/' + $scope.character._id + '/decisions');
 
   // Download the data into a local object
   // var syncObject = $firebaseObject(ref);
@@ -33,7 +33,7 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   // syncObject.$bindTo($scope, "data");
 
   //before all this, we want to figure out WHICH character we want to find decisions/choices/messages for
-  console.log(ref);
+  // console.log(ref);
 
   //an array of all the choices
   $scope.choices = $firebaseArray(decisionRef);

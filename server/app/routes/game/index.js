@@ -2,108 +2,108 @@
 var router = require('express').Router();
 var mongoose = require('mongoose');
 var Game = mongoose.model('Game');
-var Character = mongoose.model('Character');
 var Event = mongoose.model('Event');
-var _=require('lodash');
+var _ = require('lodash');
 var Firebase = require('firebase');
 
-
 router.get('/', function(req, res, next) {
+  console.log("ahhhhhhhh!");
   Game.find({})
     .then(games => {
+      console.log("Getting here!");
       res.status(200).json(games);
     })
     .then(null, next);
 });
 
-var game, characters;
+// var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
+var game, characters, gameID, gameRef;
+// gameID = "-K9hE8L_Y2NAxvi8x06R";
+// gameRef = myFirebaseRef.child('games').child(gameID);
 
-var gameID, gameRef;
-
-router.get('/build/:instructionId', function (req, res, next) {
+router.get('/build/:instructionId', function(req, res, next) {
 	Game.findById(req.params.instructionId)
-	.lean()
-	.populate('events')
-	.populate('characters')
-	.then(function(foundGame) {
-		console.log(game)
-		game = foundGame;
-		var characterMap = {};
-		var eventMap = {};
-		game.characters.forEach(function(character){
-			//console.log("character:", character);
-			characterMap[character._id] = character;
-		})
+	  .lean()
+	  .populate('events')
+	  .populate('characters')
+	  .then(function(foundGame) {
+	    game = foundGame;
+	    var characterMap = {};
+	    var eventMap = {};
+	    game.characters.forEach(function(character) {
+	      //console.log("character:", character);
+	      characterMap[character._id] = character;
+	    })
+	    var choiceEvents = {}
+	    game.events.forEach(function(event) {
+		    event.targets = event.targets.map(function(target){
+		    	return target.toString();
+		    })
+	      eventMap[event._id] = event;
 
-		game.events.forEach(function(event){
-			eventMap[event._id] = event;
-		})
-
-		console.log("character map is", characterMap);
-		game.characters = characterMap;
-		game.events = eventMap;
-		// console.log("GAME IS", game);
-		characters = _.shuffle(game.characters);
-		gameRef = myFirebaseRef.child('games').push(game);
-		gameID = gameRef.key();
-		console.log("ID IS", gameID);
-		res.json(gameID);
-	})
+	      if(event.type === "choice") {
+	      	choiceEvents[event._id] = {targets:event.targets};
+	      }
+	    })
+	    game.votes = choiceEvents;
+	    console.log("character map is", characterMap);
+	    game.characters = characterMap;
+	    game.events = eventMap;
+	    // console.log("GAME IS", game);
+	    characters = _.shuffle(game.characters);
+	    gameRef = myFirebaseRef.child('games').push(game);
+	    gameID = gameRef.key();
+	    console.log("ID IS", gameID);
+	    res.json(gameID);
+	  }).then(null, console.log)
 });
 
+
 var eventHandler = {
-	//textEvent example object
-	// {
-	// 	text: "things to say",
-	// 	title: "title of things to say",
-	// 	characterIds: [characterIds]
-	// }
 	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
 	text : function(textEvent){
-
 		textEvent.targets.forEach(function(targetId){
-			gameRef.child(targetId).child("message").push({message:textEvent.eventThatOccurred});
+			targetId = targetId.toString();
+			gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
 		});
 	},
 
-
-	/*
-	some_choiceEvent = {
-	characterIds: [characterIds],
-	question: "who? what? Where?"
-	choices: [{choice object},{choice object}...]
-	rootEvent: eventId,
-	eventToTrigger: eventId,
-	}
-	*/
+	// pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
 	choice: function(choiceEvent) {
 	    choiceEvent.targets.forEach(function(targetId) {
-	        gameRef.child(targetId).child("decisions").push({
+					targetId = targetId.toString();
+	        gameRef.child('characters').child(targetId).child("decisions").push({
 	            eventId: choiceEvent._id,
-	            message: choiceEvent.eventThatOccurred,
-	            decision: choiceEvent.decision
+	            message: choiceEvent.eventThatOccurred || "",
+	            decision: choiceEvent.decision,
+              answered: false
 	        });
 	    })
 	}
+
 }
 
 var startTimed = function() {
 
   var startTime = Date.now();
-  return setInterval(function(){
-	  var timed = game.events.filter(function(thisEvent){
-	  	return thisEvent.triggeredBy === "time";
-	  }).sort(function(a,b){
+  	var timed = []
+  	Object.keys(game.events).forEach(function(eventKey){
+  		if(game.events[eventKey].triggeredBy === "time") {
+  			timed.push(game.events[eventKey]);
+  		}
+  	});
+
+	  timed.sort(function(a,b){
 	  	return b.timed.timeout - a.timed.timeout;
 	  });
-	  console.log(timed)
+  return setInterval(function(){
 	  if (timed.length < 1) return;
 	  if(Date.now() - startTime >= timed[timed.length-1].timed.timeout){
 	    var currentEvent = timed.pop();
 	    eventHandler[currentEvent.type](currentEvent)
 	    gameRef.child("pastEvents").child("timed").push({pastEvent:{
-	      name:currentEvent.name}});
+	      name:currentEvent.eventThatOccurred || ""}});
 	  }
 
 	}, 500)
@@ -128,17 +128,20 @@ router.post('/:gameId/register-character', function(req, res, next){
 	}
 });
 
-router.get('/start', function (req, res, next) {
-	startTimed();
-	res.status(200).send('game started')
+router.get('/start', function(req, res, next) {
+  startTimed();
+  res.status(200).send('game started')
 });
 
-router.post('/event/:eventId', function(req, res, next){
-	Event.findById(req.params.eventId).exec()
-	.then(function(foundEvent){
-		eventHandler[foundEvent.type](foundEvent);
-	}).then(null, next);
+router.post('/event/:eventId', function(req, res, next) {
+  Event.findById(req.params.eventId).exec()
+    .then(function(foundEvent) {
+      eventHandler[foundEvent.type](foundEvent);
+    }).then(null, next);
 })
 
-
-module.exports = router;
+require('./vote-listening.js')
+module.exports = {
+  router: router,
+  eventHandler: eventHandler
+};

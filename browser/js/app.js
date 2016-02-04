@@ -36,12 +36,15 @@ app.run(function ($rootScope, AuthService, $state) {
         event.preventDefault();
 
         AuthService.getLoggedInUser().then(function (user) {
+            console.log("This is inside authservice");
             // If a user is retrieved, then renavigate to the destination
             // (the second time, AuthService.isAuthenticated() will work)
             // otherwise, if no user is logged in, go to "login" state.
             if (user) {
+                console.log("There's a user");
                 $state.go(toState.name, toParams);
             } else {
+                console.log("THere's no user");
                 $state.go('login');
             }
         });

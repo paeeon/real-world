@@ -29,4 +29,4 @@ app.factory('characterFactory', function($http, $firebaseObject, $firebaseArray)
   // }
 
 	return characterFactory;
-})
+});

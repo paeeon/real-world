@@ -1,48 +1,52 @@
-var voteRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/K9cpfp9AxxsXHgEgFl_/votes");
+var gamesRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/games/");
+var voteRef = gamesRef.child("-K9hE8L_Y2NAxvi8x06R").child('votes');
 var mongoose = require('mongoose');
 var Event = mongoose.model('Event');
 var i = 0;
-voteRef.on('child_added', function(childSnapshot, prevChildKey) {
-
+voteRef.on('child_changed', function(childSnapshot, prevChildKey) {
   var eventHandler = require('./index').eventHandler;
-  // // array of obj --> [{choice: ..., willTrigger: ...}]
   i++;
   var currentVote = childSnapshot.val();
-  // // console.log(currentVote)
-  var parent = voteRef.child(childSnapshot.key());
-
-  var eventId = "56b0ec617990997c9e970374"
-  // var parentKeys = Object.keys(parent);
+  var parentRef = voteRef.child(childSnapshot.key());
+  console.log('votes logged', childSnapshot.numChildren()-1)
+  console.log('expected numer of votes', currentVote.targets.length);
   var votes = {};
-  Event.findById(eventId).exec()
+
+  Event.findById(parentRef.key()).exec()
   .then(function(currentEvent) {
-    if (childSnapshot.numChildren() === currentEvent.targets.length) {
-      childSnapshot.forEach(function(vote) {
-        var choice = parent.vote.choice;
-        if (!votes[choice]) {
-          votes[choice] = 1;
-        } else {
-          votes[choice] = votes[choice]++;
+    if (childSnapshot.numChildren()-1 === currentEvent.targets.length) {
+      var parent;
+      parentRef.once('value', function(parentSnap){
+        parent = parentSnap.val()
+      });
+      // console.log(parent) 
+      childSnapshot.forEach(function(snapshot) {
+        var vote = snapshot.val();
+        if(vote.choice){
+
+          if (!votes[vote.choice]) {
+            votes[vote.choice] = vote;
+            votes[vote.choice].count = 1;
+          } else {
+            votes[vote.choice].count++;
+          }
         }
       });
     }
-    var winningVote;
+    var winningVote = {max:0};
     Object.keys(votes).forEach(function(vote) {
-      if (!winningVote) winningVote = votes.vote;
-      else {
-        if (winningVote < votes.vote) {
-          winningVote = votes.vote;
+        if (!winningVote.winner) winningVote = vote;
+        else {
+          if (winningVote.max < votes[vote]) {
+            winningVote.winner = vote;
+          }
         }
-      }
-    // var eventToTrigger = votes.winningVote.eventId.willTrigger;
     });
-    return "56b0ec617990997c9e970374";
+    return votes[winningVote].willTrigger
   }).then(function(toTrigger) {
     return Event.findById(toTrigger).exec();
   }).then(function(eventToTrigger) {
-    // console.log(eventToTrigger)
-    // console.log(eventHandler.text)
     eventHandler[eventToTrigger.type](eventToTrigger);
 
-  });
+  }).then(null, console.log);
 });

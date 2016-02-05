@@ -5,6 +5,8 @@ var Game = mongoose.model('Game');
 var Event = mongoose.model('Event');
 var _ = require('lodash');
 var Firebase = require('firebase');
+var Chance = require('chance');
+var chance = new Chance();
 
 router.get('/', function(req, res, next) {
   Game.find({})
@@ -16,73 +18,96 @@ router.get('/', function(req, res, next) {
 
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
-var game, characters, gameID, gameRef, startTime, endTime;
+var game, characters, gameID, gameRef, randomShortId;
+var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
 
 router.get('/build/:instructionId', function(req, res, next) {
-  Game.findById(req.params.instructionId)
-    .lean()
-    .populate('events')
-    .populate('characters')
-    .then(function(foundGame) {
-      game = foundGame;
-      var characterMap = {};
-      var eventMap = {};
-      game.characters.forEach(function(character) {
-        //console.log("character:", character);
-        characterMap[character._id] = character;
-      })
-      var choiceEvents = {}
-      game.events.forEach(function(event) {
-        event.targets = event.targets.map(function(target) {
-          return target.toString();
-        })
-        eventMap[event._id] = event;
+	Game.findById(req.params.instructionId)
+	  .lean()
+	  .populate('events')
+	  .populate('characters')
+	  .then(function(foundGame) {
+	    game = foundGame;
+	    var characterMap = {};
+	    var eventMap = {};
+	    game.characters.forEach(function(character) {
+	      //console.log("character:", character);
+	      characterMap[character._id] = character;
+	    })
+	    var choiceEvents = {};
+      var resolve = {};
+	    game.events.forEach(function(event) {
+		    event.targets = event.targets.map(function(target){
+		    	return target.toString();
+		    });
+	      eventMap[event._id] = event;
+	      if(event.type === "choice") {
+	      	choiceEvents[event._id] = {targets:event.targets};
+          if (event.needsResolution) {
+            var id = event._id.toString();
+            resolve[id] = 'replace';
+          }
+	      }
 
-        if (event.type === "choice") {
-          choiceEvents[event._id] = {
-            targets: event.targets
-          };
-        }
-      })
-      game.votes = choiceEvents;
-      console.log("character map is", characterMap);
-      game.characters = characterMap;
-      game.events = eventMap;
-      // console.log("GAME IS", game);
-      characters = _.shuffle(game.characters);
-      gameRef = myFirebaseRef.child('games').push(game);
-      gameID = gameRef.key();
-      console.log("ID IS", gameID);
-      res.json(gameID);
-    }).then(null, console.log)
+	    });
+	    game.votes = choiceEvents;
+	    game.characters = characterMap;
+	    game.events = eventMap;
+      game.resolveTable = resolve;
+	    // console.log("GAME IS", game);
+	    characters = _.shuffle(game.characters);
+	    myFirebaseRef.child('games').push(game)
+	    .then(function(builtGame){
+	    	gameRef = builtGame;
+	    	console.log("THIS IS THE RESULT", builtGame);
+	    	gameID = gameRef.key();
+	    	randomShortId = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@%&+?'});
+	    	gameShortIdConverter[randomShortId] = gameID;
+	    	myFirebaseRef.child('games').update({'gameShortIdConverter': gameShortIdConverter})
+	    	.then(function(){
+	    		gameShortIdConverter = {};
+	    		res.json(gameID);
+	    	})
+	    })
+	  }).then(null, console.log);
 });
 
+var resolveEvent = function(eventToResolve) {
+  gameRef.child('resolveTable').child(eventToResolve._id.toString())
+    .once('value', function(snapshot) {
+      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val());
+      textEvents(eventToResolve);
+    });
+};
+
+function textEvents(textEvent) {
+  textEvent.targets.forEach(function(targetId){
+    targetId = targetId.toString();
+    gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
+  });
+}
 
 var eventHandler = {
-  // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
-  text: function(textEvent) {
-    textEvent.targets.forEach(function(targetId) {
-      targetId = targetId.toString();
-      gameRef.child('characters').child(targetId).child("message").push({
-        message: textEvent.eventThatOccurred
-      });
-    });
-  },
+	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
+	text : function(textEvent){
+    if (textEvent.needsResolution) resolveEvent(textEvent);
+    else textEvents(textEvent);
+	},
 
-  // pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
-  choice: function(choiceEvent) {
-    choiceEvent.targets.forEach(function(targetId) {
-      targetId = targetId.toString();
-      gameRef.child('characters').child(targetId).child("decisions").push({
-        eventId: choiceEvent._id,
-        message: choiceEvent.eventThatOccurred || "",
-        decision: choiceEvent.decision,
-        answered: false
-      });
-    })
-  }
+	// pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
+	choice: function(choiceEvent) {
+	    choiceEvent.targets.forEach(function(targetId) {
+					targetId = targetId.toString();
+	        gameRef.child('characters').child(targetId).child("decisions").push({
+	            eventId: choiceEvent._id,
+	            message: choiceEvent.eventThatOccurred || "",
+	            decision: choiceEvent.decision,
+              answered: false
+	        });
+	    });
+	}
 
 }
 
@@ -138,26 +163,20 @@ var startTimed = function() {
 };
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
-router.post('/:gameId/register-character', function(req, res, next) {
-  var character;
-
+router.post('/:gameId/register-character', function(req, res, next){
+	var character;
   // characters is a shuffled array of all the characters in this game
   // If there are characters to fill (that have not been assigned),
-  if (characters.length > 0) {
+	if (characters.length > 0) {
+	console.log("characters are", characters);
     character = characters.pop();
-    console.log("GAME ID IS", gameID);
-    console.log("._ID", character._id);
-    myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({
-      "playerName": req.body.playerName,
-      "playerNumber": req.body.playerNumber
-    });
-    res.status(201).json({
-      _id: character._id
-    });
-  } else {
-    var err = new Error("There is no more room in the game! Sorry!");
-    next(err);
-  }
+    myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({"playerName": req.body.playerName, "playerNumber": req.body.playerNumber});
+		res.status(201).json({_id:character._id});
+	}
+	else {
+		var err = new Error("There is no more room in the game! Sorry!");
+		next(err);
+	}
 });
 
 var gameStarted = false;

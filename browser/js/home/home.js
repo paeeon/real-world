@@ -6,11 +6,9 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('HomeController', function($scope, allInstructions, $firebaseObject, $state) {
-var games = new Firebase("https://character-test.firebaseio.com/games/");
-var realID;
-
-  $scope.allInstructions = allInstructions;
+app.controller('HomeController', function($scope, $firebaseObject, $state) {
+  var games = new Firebase("https://character-test.firebaseio.com/games/");
+  var realID;
 
   $scope.joinExistingGame = function() {
     //a firebase object of the shortIDs matched to the real game IDs

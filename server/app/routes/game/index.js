@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
-var game, characters, gameID, gameRef, randomShortId;
+var game, characters, gameID, gameRef, randomShortId, startTime;
 var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
@@ -114,8 +114,6 @@ var eventHandler = {
 // Function for starting timed events
 var startTimed = function() {
 
-  startTime = Date.now();
-
   var timed = [];
 
   // Loop through the keys of each of the game's events
@@ -131,6 +129,8 @@ var startTimed = function() {
   timed.sort(function(a, b) {
     return b.timed.timeout - a.timed.timeout;
   });
+
+  startTime = Date.now();
 
   // Every 500 milliseconds, do this function:
   return setInterval(function() {

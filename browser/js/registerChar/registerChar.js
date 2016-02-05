@@ -13,24 +13,22 @@ app.config(function($stateProvider) {
 });
 
 app.controller('regController', function($scope, $http, $state, characterFactory, $stateParams, $firebaseArray, gamesCharacters) {
-  console.log("IS THE GAME FULL?", $scope.gameFull);
   $scope.gameFull = false;
 
   $firebaseArray(gamesCharacters).$loaded()
-    .then(function(characters) {
-      console.log("CHARACTERS ARE", characters);
+  .then(function(characters) {
       $scope.roomLeftInGame = characters.length;
-      console.log("CHARACTER LENGTH IS", characters.length);
       characters.forEach(function(character) {
         if (character.$id && character.playerName) {
           $scope.roomLeftInGame--;
-          console.log("ROOM LEFT IN GAME", $scope.roomLeftInGame);
         }
       });
       if ($scope.roomLeftInGame === 0) $scope.gameFull = true;
-
     })
 
+    gamesCharacters.on('child_changed', function(dataSnap){
+      $scope.roomLeftInGame--;
+    })
 
   $scope.joinGame = function() {
     characterFactory.joinGame($stateParams.gameId, $scope.player.name, $scope.player.phoneNumber)

@@ -1,4 +1,4 @@
-<form id="game-form" name="gameForm" ng-submit="nextStep()">
+<form id="game-form" name="gameForm" ng-submit="submitGame()">
 
     <!-- <alert type="danger" ng-show="error">
         {{ error }}
@@ -20,5 +20,5 @@
         <label for="game-numplayers">Number of Players</label>
         <input type="number" ng-model="game.numplayers" class="form-control" id="game-numplayers" placeholder="Number of players">
     </div>
-    <button type="submit" class="btn btn-default">Add characters</button>
+    <button type="submit" class="btn btn-default">Next step</button>
 </form>

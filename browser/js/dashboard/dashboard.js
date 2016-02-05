@@ -1,60 +1,80 @@
-app.config(function ($stateProvider) {
-    $stateProvider.state('dashboard', {
-        url: 'games/:gameId/character/:characterId/dashboard/',
-        templateUrl: 'js/dashboard/dashboard.html',
-        controller: 'DashBoardController',
-        resolve: {
-          character: function($stateParams, characterFactory) {
-            return characterFactory.getCharacter($stateParams._id);
-          }
-        }
-    });
+app.config(function($stateProvider) {
+  $stateProvider.state('dashboard', {
+    url: '/games/:gameId/character/:characterId/dashboard',
+    templateUrl: 'js/dashboard/dashboard.html',
+    controller: 'DashBoardController',
+    resolve: {
+      game: function($stateParams, GameFactory) {
+        return GameFactory.getOneGame($stateParams.gameId);
+      },
+      character: function($stateParams, characterFactory) {
+        return characterFactory.getCharacter($stateParams.gameId, $stateParams.characterId);
+      }
+    }
+  });
 });
 
-app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character) {
-  // var ref = new Firebase('https://popping-heat-9764.firebaseio.com/');
+app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game, Notification) {
+  // console.log("game", game);
+  $rootScope.inGame = true;
+  $scope.gameTitle = game.title;
+
   $scope.character = character;
+
   var gameRef = new Firebase('https://character-test.firebaseio.com/');
-  var decisionRef = new Firebase('https://character-test.firebaseio.com/characters/' + $scope.character._id + '/decisions');
+  var myCharacterRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id);
+  var myMessageRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/message');
+  var myDecisionRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/decisions');
 
-  // Download the data into a local object
-  // var syncObject = $firebaseObject(ref);
-  // P.S. ^ You could also do something like this:
-  // $firebaseObject(ref.child('profiles').child('physicsmarie'));
+  var myCharacterObj = $firebaseObject(myCharacterRef);
+  var myMessagesObj = $firebaseObject(myMessageRef);
+  var myDecisionObj = $firebaseObject(myDecisionRef);
 
-  // var syncObject = $firebaseObject(ref);
+  $scope.messages = [];
+  $scope.decisions = [];
 
+  myMessageRef.on('child_added', function(childSnapshot) {
+    console.log("New message added!");
+    console.log(childSnapshot.val());
+    $scope.messages.push(Notification(childSnapshot.val().message));
+  });
 
-  // Synchronize the object with three-way binding
-  // syncObject.$bindTo($scope, "data");
-  // The database will now have a key 'text' with associated value of
-  // whatever is typed into the input array in the home view.
+  // if (myDecisionRef.on) {
+  //   myDecisionRef.on('child_added', function(childSnapshot) {
+  //     var decisionObj = {
+  //       message: childSnapshot.val().message || null,
+  //       question: childSnapshot.val().decision.question,
+  //       choices: childSnapshot.val().decision.choices,
+  //       template: 'decision'
+  //     };
+  //     console.log("New decision added!");
+  //     Notification.decision(decisionObj);
+  //   });
+  // }
 
-  // syncObject.$bindTo($scope, "data");
+  // var messageWatch = myMessagesObj.$watch(function() {
+  //   // console.log("The new message is…");
+  //   // var newMessage = myMessagesObj[myMessagesObj.length - 1];
+  //   console.log(myMessagesObj);
+  // });
+
 
   //before all this, we want to figure out WHICH character we want to find decisions/choices/messages for
   // console.log(ref);
 
   //an array of all the choices
-  $scope.choices = $firebaseArray(decisionRef);
-  console.log($scope.choices);
+  // $scope.choices = $firebaseArray(decisionRef);
+  // console.log($scope.choices);
 
-  //
-  $scope.currentChoice = $scope.choices[$scope.choices.length - 1];
+  // $scope.currentChoice = $scope.choices[$scope.choices.length - 1];
 
-  // //access to the answered key
-  // $scope.answered = $firebaseObject(decisionRef);
-  // console.log($scope.answered);
-  //
-  // //three way data binding so that when an answer is chosen, it changes answered to true
-  // $scope.answered.$bindTo($scope, "answered");
 
-  //the function that is called when a choice is chosen, so that the corresponding reaction function can be called
-  $scope.choose = function(choice) {
-    // if (choice.willTrigger) eventFactory.triggerEvent(choice.willTrigger);
-    choice.eventId = $scope.currentChoice.eventId
-    gameRef.child('votes').child($scope.currentChoice.eventId).push(choice)
-    $scope.currentChoice.answered = true;
-    // return choice.$value;
-  };
+  // //the function that is called when a choice is chosen, so that the corresponding reaction function can be called
+  // $scope.choose = function(choice) {
+  //   if (choice.willTrigger) eventFactory.triggerEvent(choice.willTrigger);
+  //   choice.eventId = $scope.currentChoice.eventId
+  //   gameRef.child('votes').child($scope.currentChoice.eventId).push(choice)
+  //   $scope.currentChoice.answered = true;
+  //   return choice.$value;
+  // };
 });

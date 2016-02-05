@@ -14,7 +14,7 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('CharacterInfoController', function($scope, $state, character, characters, characterFactory, $stateParams, $firebaseArray) {
+app.controller('CharacterInfoController', function($scope, $state, character, characters, characterFactory, $stateParams, $firebaseArray, GameFactory) {
 
   $scope.character = character;
   $scope.counter = 0;
@@ -31,15 +31,36 @@ app.controller('CharacterInfoController', function($scope, $state, character, ch
   $scope.numCharacters = characters.length;
 
   var numPlayers = 0;
+  var totalNumOfPlayerSlots;
 
   $firebaseArray(allCharRef).$loaded()
     .then(function(characters) {
+      totalNumOfPlayerSlots = characters.length;
       characters.forEach(function(character) {
         if (character.playerReady) numPlayers++;
       });
 
       $scope.numPlayersJoined = numPlayers;
     });
+
+  $scope.fastSetup = function() {
+    allCharRef.once('value', function(dataSnapshot) {
+      dataSnapshot.forEach(function(character) {
+        character.ref().update({
+          playerReady: true
+        });
+        console.log(character.val());
+      });
+    });
+
+    return GameFactory.triggerGameStart()
+        .then(function() {
+          $state.go('dashboard', {
+            gameId: $stateParams.gameId,
+            characterId: $stateParams.characterId
+          });
+        });
+  };
 
   allCharRef.on('child_changed', function(childSnapshot) {
     if (childSnapshot.val().playerReady) {
@@ -48,7 +69,17 @@ app.controller('CharacterInfoController', function($scope, $state, character, ch
   });
 
   $scope.$watch('numPlayersJoined', function(newValue, oldValue) {
-    if (newValue === 10) $state.go('dashboard', { gameId: $stateParams.gameId, characterId: $stateParams.characterId });
+    if (newValue === totalNumOfPlayerSlots) {
+      GameFactory.triggerGameStart()
+        .then(function() {
+          $state.go('dashboard', {
+            gameId: $stateParams.gameId,
+            characterId: $stateParams.characterId
+          });
+        });
+    }
   });
+
+
 
 });

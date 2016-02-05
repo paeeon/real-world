@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+}
+
+@import 'variables';
+
+body {
+  background: $dark-blue;
+  padding-bottom: 70px;
+  font-family: $font-stack;
+  color: $aqua-blue;
+}
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+#main {
+  padding-top: 60px;
+  margin: 0 auto;
+}
+
+/* Font Styles */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-stack;
+  color: white;
+}
+
+p, span {
+  font-family: $font-stack;
+  color: $aqua-blue;
+}
+
+@import 'directives/main';
+@import 'home/main';
+@import 'about/main';
+@import 'tutorial/main';
+@import 'login/main';
+@import 'character-info/main';

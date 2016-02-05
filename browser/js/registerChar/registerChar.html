@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12" ng-show="!gameFull">
+      <h6>Room left in the game</h6>
+      <h3>{{ roomLeftInGame }}</h3>
+
+      <h4>Enter your information in below to receive your Role and join the game!</h4>
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" class="form-control" ng-model="player.name">
+      </div>
+      <div class="form-group">
+        <label>Your Phone Number</label>
+        <input type="text" class="form-control" ng-model="player.phoneNumber">
+      </div>
+      <button class="btn btn-block btn-primary" ng-click="joinGame()">Join the game!</button>
+    </div>
+    <div class="col-xs-12" ng-show="gameFull">
+      <p class="text-center">There's no space left in this game for you! :(</p>
+      <button class="btn btn-default btn-block">Start a new game!</button>
+    </div>
+  </div>
+</div>

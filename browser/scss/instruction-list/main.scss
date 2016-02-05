@@ -1,0 +1,7 @@
+@import '../variables';
+
+a.list-group-item {
+  &:hover {
+    cursor: pointer;
+  }
+}

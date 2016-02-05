@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 
 
 var schema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
   triggeredBy: {
     type: String,
     enum: ['time', 'event', 'character', 'random']

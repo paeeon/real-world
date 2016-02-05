@@ -1,0 +1,24 @@
+<form id="game-form" name="gameForm" ng-submit="nextStep()">
+
+    <!-- <alert type="danger" ng-show="error">
+        {{ error }}
+    </alert> -->
+    <h2>GAME ENVIRONMENT</h2>
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" ng-model="game.title" class="form-control" id="title" placeholder="Enter title">
+    </div>
+    <div class="form-group">
+        <label for="game-setting">Setting</label>
+        <input type="text" ng-model="game.setting" class="form-control" id="game-setting" placeholder="Setting">
+    </div>
+    <div class="form-group">
+        <label for="game-overview">Overview</label>
+        <textarea type="text" ng-model="game.overview" class="form-control" id="game-overview" placeholder="Overview"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="game-numplayers">Number of Players</label>
+        <input type="number" ng-model="game.numplayers" class="form-control" id="game-numplayers" placeholder="Number of players">
+    </div>
+    <button type="submit" class="btn btn-default">Add characters</button>
+</form>

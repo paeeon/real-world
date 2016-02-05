@@ -2,21 +2,30 @@ app.config(function($stateProvider) {
   $stateProvider.state('register', {
     url: '/games/:gameId/register',
     templateUrl: 'js/registerChar/registerChar.html',
-    controller: 'regController'
+    controller: 'regController',
+    resolve: {
+      gamesCharacters: function($stateParams) {
+        console.log("gameID is", $stateParams.gameId);
+        return new Firebase("https://character-test.firebaseio.com/games/" + $stateParams.gameId + "/characters");
+      }
+    }
   });
 });
 
-app.controller('regController', function($scope, $http, $state, characterFactory, $stateParams, $firebaseArray) {
-  var gamesCharacters = new Firebase("https://character-test.firebaseio.com/games/" + $stateParams.gameId + "/characters");
-
+app.controller('regController', function($scope, $http, $state, characterFactory, $stateParams, $firebaseArray, gamesCharacters) {
+  console.log("IS THE GAME FULL?", $scope.gameFull);
   $scope.gameFull = false;
 
   $firebaseArray(gamesCharacters).$loaded()
     .then(function(characters) {
+      console.log("CHARACTERS ARE", characters);
       $scope.roomLeftInGame = characters.length;
+      console.log("CHARACTER LENGTH IS", characters.length);
       characters.forEach(function(character) {
-        // console.log(character.$id);
-        if (character.$id && character.playerName) $scope.roomLeftInGame--;
+        if (character.$id && character.playerName) {
+          $scope.roomLeftInGame--;
+          console.log("ROOM LEFT IN GAME", $scope.roomLeftInGame);
+        }
       });
       if ($scope.roomLeftInGame === 0) $scope.gameFull = true;
 

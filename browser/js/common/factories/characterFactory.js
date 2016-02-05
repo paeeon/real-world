@@ -4,7 +4,6 @@ app.factory('characterFactory', function($http, $firebaseObject, $firebaseArray)
 		var charRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId + "/characters/" + characterId);
     return $firebaseObject(charRef).$loaded()
       .then(function(character) {
-        // console.log(character);
         return character;
       });
 	};

@@ -60,13 +60,19 @@ router.get('/build/:instructionId', function(req, res, next) {
       game.resolveTable = resolve;
 	    // console.log("GAME IS", game);
 	    characters = _.shuffle(game.characters);
-	    gameRef = myFirebaseRef.child('games').push(game);
-	    gameID = gameRef.key();
-	    randomShortId = chance.bb_pin();
-	    gameShortIdConverter[randomShortId] = gameID;
-	    myFirebaseRef.child('games').update({'gameShortIdConverter': gameShortIdConverter});
-	    gameShortIdConverter = {};
-	    res.json(gameID);
+	    myFirebaseRef.child('games').push(game)
+	    .then(function(builtGame){
+	    	gameRef = builtGame;
+	    	console.log("THIS IS THE RESULT", builtGame);
+	    	gameID = gameRef.key();
+	    	randomShortId = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@%&+?'});
+	    	gameShortIdConverter[randomShortId] = gameID;
+	    	myFirebaseRef.child('games').update({'gameShortIdConverter': gameShortIdConverter})
+	    	.then(function(){
+	    		gameShortIdConverter = {};
+	    		res.json(gameID);
+	    	})
+	    })	    
 	  }).then(null, console.log);
 });
 
@@ -138,6 +144,7 @@ router.post('/:gameId/register-character', function(req, res, next){
   // characters is a shuffled array of all the characters in this game
   // If there are characters to fill (that have not been assigned),
 	if (characters.length > 0) {
+	console.log("characters are", characters);
     character = characters.pop();
     myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({"playerName": req.body.playerName, "playerNumber": req.body.playerNumber});
 		res.status(201).json({_id:character._id});

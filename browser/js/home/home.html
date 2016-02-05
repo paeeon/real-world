@@ -1,9 +1,9 @@
 <div class="container">
   <div class="well">
     <div class="form-group">
-      <input type="text" class="form-control" placeholder="Enter a game code…">
+      <input type="text" class="form-control" ng-model="gameID" placeholder="Enter a game code…">
     </div>
-    <button class="btn btn-primary btn-block" ng-click="joinExistingGame(gameToJoin)">Join a Game</button>
+    <button class="btn btn-primary btn-block" ng-click="joinExistingGame()">Join a Game</button>
   </div>
   <button class="btn btn-primary btn-block" ui-sref="instructionList">Start a New Game</button>
 </div>

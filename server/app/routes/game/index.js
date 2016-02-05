@@ -5,6 +5,8 @@ var Game = mongoose.model('Game');
 var Event = mongoose.model('Event');
 var _ = require('lodash');
 var Firebase = require('firebase');
+var Chance = require('chance');
+var chance = new Chance();
 
 router.get('/', function(req, res, next) {
   console.log("ahhhhhhhh!");
@@ -18,7 +20,8 @@ router.get('/', function(req, res, next) {
 
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
-var game, characters, gameID, gameRef;
+var game, characters, gameID, gameRef, randomShortId;
+var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
 
@@ -52,16 +55,24 @@ router.get('/build/:instructionId', function(req, res, next) {
 
 	    });
 	    game.votes = choiceEvents;
-	    console.log("character map is", characterMap);
 	    game.characters = characterMap;
 	    game.events = eventMap;
       game.resolveTable = resolve;
 	    // console.log("GAME IS", game);
 	    characters = _.shuffle(game.characters);
-	    gameRef = myFirebaseRef.child('games').push(game);
-	    gameID = gameRef.key();
-	    console.log("ID IS", gameID);
-	    res.json(gameID);
+	    myFirebaseRef.child('games').push(game)
+	    .then(function(builtGame){
+	    	gameRef = builtGame;
+	    	console.log("THIS IS THE RESULT", builtGame);
+	    	gameID = gameRef.key();
+	    	randomShortId = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@%&+?'});
+	    	gameShortIdConverter[randomShortId] = gameID;
+	    	myFirebaseRef.child('games').update({'gameShortIdConverter': gameShortIdConverter})
+	    	.then(function(){
+	    		gameShortIdConverter = {};
+	    		res.json(gameID);
+	    	})
+	    })	    
 	  }).then(null, console.log);
 });
 
@@ -130,13 +141,11 @@ var startTimed = function() {
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
 router.post('/:gameId/register-character', function(req, res, next){
 	var character;
-
   // characters is a shuffled array of all the characters in this game
   // If there are characters to fill (that have not been assigned),
 	if (characters.length > 0) {
+	console.log("characters are", characters);
     character = characters.pop();
-    console.log("GAME ID IS", gameID);
-    console.log("._ID", character._id);
     myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({"playerName": req.body.playerName, "playerNumber": req.body.playerNumber});
 		res.status(201).json({_id:character._id});
 	}

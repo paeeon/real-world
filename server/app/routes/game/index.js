@@ -9,10 +9,8 @@ var Chance = require('chance');
 var chance = new Chance();
 
 router.get('/', function(req, res, next) {
-  console.log("ahhhhhhhh!");
   Game.find({})
     .then(games => {
-      console.log("Getting here!");
       res.status(200).json(games);
     })
     .then(null, next);
@@ -20,7 +18,7 @@ router.get('/', function(req, res, next) {
 
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
-var game, characters, gameID, gameRef, randomShortId;
+var game, characters, gameID, gameRef, randomShortId, startTime;
 var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
@@ -72,7 +70,7 @@ router.get('/build/:instructionId', function(req, res, next) {
 	    		gameShortIdConverter = {};
 	    		res.json(gameID);
 	    	})
-	    })	    
+	    })
 	  }).then(null, console.log);
 });
 
@@ -113,30 +111,56 @@ var eventHandler = {
 
 }
 
+// Function for starting timed events
 var startTimed = function() {
 
-  var startTime = Date.now();
-  	var timed = []
-  	Object.keys(game.events).forEach(function(eventKey){
-  		if(game.events[eventKey].triggeredBy === "time") {
-  			timed.push(game.events[eventKey]);
-  		}
-  	});
+  var timed = [];
 
-	  timed.sort(function(a,b){
-	  	return b.timed.timeout - a.timed.timeout;
-	  });
-  return setInterval(function(){
-	  if (timed.length < 1) return;
-	  if(Date.now() - startTime >= timed[timed.length-1].timed.timeout){
-	    var currentEvent = timed.pop();
-	    eventHandler[currentEvent.type](currentEvent)
-	    gameRef.child("pastEvents").child("timed").push({pastEvent:{
-	      name:currentEvent.eventThatOccurred || ""}});
-	  }
+  // Loop through the keys of each of the game's events
+  Object.keys(game.events).forEach(function(eventKey) {
+    // If a game event has a 'triggeredBy' attribute set to "time",
+    // push that game event to the 'timed' array.
+    if (game.events[eventKey].triggeredBy === "time") {
+      timed.push(game.events[eventKey]);
+    }
+  });
 
-	}, 500)
-}
+  // Organize the events in the timed array, in order from latest to the soonest
+  timed.sort(function(a, b) {
+    return b.timed.timeout - a.timed.timeout;
+  });
+
+  startTime = Date.now();
+
+  // Every 500 milliseconds, do this function:
+  return setInterval(function() {
+    // IF there are no timed events left, do nothing
+    if (timed.length < 1) return;
+    // IF the time that has elapsed in the game is greater than or equal to the
+    // timeout of the last element in the timed array (which should be the timed
+    // event that will happen soonest, a.k.a. the event that should happen now), THEN…
+    //   1. Remove the event that should happen now and save it to a temporary variable 'currentEvent'
+    //   2. Call the eventHandler function with 'currentEvent'
+    //   3. Push object to Firebase, under the specific game we're in > "pastEvents" > "timed".
+    //      This object will have a key "pastEvent" and a value with another object.
+    //      This inner object has a key of name and a value of the eventThatOccurred
+    //      (i.e., "The winners have been announced!"), or an empty string (if nothing exists on that
+    //      object at the requested location).
+    if (Date.now() - startTime >= timed[timed.length - 1].timed.timeout) {
+      var currentEvent = timed.pop();
+      eventHandler[currentEvent.type](currentEvent)
+      gameRef.child("pastEvents").child("timed").push({
+        pastEvent: {
+          name: currentEvent.eventThatOccurred || "",
+          type: currentEvent.type,
+          decision: currentEvent.decision || "",
+          targets: currentEvent.targets
+        }
+      });
+    }
+
+  }, 500)
+};
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
 router.post('/:gameId/register-character', function(req, res, next){
@@ -155,9 +179,18 @@ router.post('/:gameId/register-character', function(req, res, next){
 	}
 });
 
+var gameStarted = false;
 router.get('/start', function(req, res, next) {
-  startTimed();
+  if (!gameStarted) startTimed();
   res.status(200).send('game started')
+});
+
+router.get('/:gameId', function(req, res, next) {
+  Game.findById(req.params.gameId)
+    .then(game => {
+      res.status(200).json(game);
+    })
+    .then(null, next);
 });
 
 router.post('/event/:eventId', function(req, res, next) {
@@ -165,7 +198,7 @@ router.post('/event/:eventId', function(req, res, next) {
     .then(function(foundEvent) {
       eventHandler[foundEvent.type](foundEvent);
     }).then(null, next);
-})
+});
 
 require('./vote-listening.js')
 module.exports = {

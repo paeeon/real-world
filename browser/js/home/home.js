@@ -2,20 +2,13 @@ app.config(function($stateProvider) {
   $stateProvider.state('home', {
     url: '/',
     templateUrl: 'js/home/home.html',
-    controller: 'HomeController',
-    resolve: {
-      allInstructions: function(InstructionFactory) {
-        return InstructionFactory.getAllInstructions();
-      }
-    }
+    controller: 'HomeController'
   });
 });
 
-app.controller('HomeController', function($scope, allInstructions, $firebaseObject, $state) {
-var games = new Firebase("https://character-test.firebaseio.com/games/");
-var realID;
-
-  $scope.allInstructions = allInstructions;
+app.controller('HomeController', function($scope, $firebaseObject, $state) {
+  var games = new Firebase("https://character-test.firebaseio.com/games/");
+  var realID;
 
   $scope.joinExistingGame = function() {
     //a firebase object of the shortIDs matched to the real game IDs
@@ -27,10 +20,6 @@ var realID;
       //go to the register state with the realID
       $state.go('register', { gameId: realID });
     })
-
-
-
-
-  }
+  };
 
 });

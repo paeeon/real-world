@@ -30,6 +30,8 @@
         <!-- <span us-spinner="{radius:30, width:8, length: 16, color: 'white'}"></span> -->
         <h4 class="waiting-message text-center">Waiting for game to start…</h4><br>
         <h4 class="ready-characters text-center">{{numPlayersJoined}}/{{numCharacters}} characters ready</h4>
+        <!-- Remove this first button, it's just for testing -->
+        <button id="set-users-as-ready" class="btn btn-primary btn-block" ng-click="fastSetup()">Automatically set all users to be "Ready"</button>
       </div>
       <div class="dim" ng-show="ready"></div>
     </div>

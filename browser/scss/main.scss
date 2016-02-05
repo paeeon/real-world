@@ -20,8 +20,11 @@ body {
 }
 
 #main {
-  padding-top: 60px;
+  padding-top: 15px;
   margin: 0 auto;
+  &.inGame {
+    padding-top: 45px;
+  }
 }
 
 /* Font Styles */
@@ -36,6 +39,7 @@ p, span {
   color: $aqua-blue;
 }
 
+@import 'notification';
 @import 'directives/main';
 @import 'home/main';
 @import 'about/main';

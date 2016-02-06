@@ -23,11 +23,23 @@ var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
 
+var idFix = function(game) {
+  // For each key in game…
+  for (var key in game) {
+    // If the key is __id, set its value to a toString-ified version of itself
+    if (key === "_id") {
+      game[key] = game[key].toString();
+    // If the value of a key is an object, perform idFix on that object.
+    } else if (typeof game[key] === 'object') {
+      idFix(game[key]);
+    }
+  }
+};
+
 router.get('/build/:instructionId', function(req, res, next) {
 	Game.findById(req.params.instructionId)
 	  .lean()
-	  .populate('events')
-	  .populate('characters')
+	  .populate('events characters')
 	  .then(function(foundGame) {
 	    game = foundGame;
 	    var characterMap = {};
@@ -56,8 +68,8 @@ router.get('/build/:instructionId', function(req, res, next) {
 	    game.characters = characterMap;
 	    game.events = eventMap;
       game.resolveTable = resolve;
-	    // console.log("GAME IS", game);
-	    characters = _.shuffle(game.characters);
+      characters = _.shuffle(game.characters);
+      idFix(game);
 	    myFirebaseRef.child('games').push(game)
 	    .then(function(builtGame){
 	    	gameRef = builtGame;
@@ -114,6 +126,8 @@ var eventHandler = {
 
 // Function for starting timed events
 var startTimed = function() {
+
+  console.log("startTimed being called right now…");
 
   var timed = [];
 
@@ -183,7 +197,10 @@ router.post('/:gameId/register-character', function(req, res, next){
 
 var gameStarted = false;
 router.get('/start', function(req, res, next) {
-  if (!gameStarted) startTimed();
+  if (!gameStarted) {
+   startTimed();
+   gameStarted = true;
+  }
   res.status(200).send('game started')
 });
 

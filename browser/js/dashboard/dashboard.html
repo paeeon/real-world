@@ -2,19 +2,8 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <!-- <message ng-repeat="message in messages"></message> -->
-      <!-- <p>Test</p> -->
-      <!-- anything typed in here is magically saved to our Firebase database! -->
-      <!-- <input type="text" ng-model="data.text" /> -->
-      <!-- <h1>You said: {{ data.text }}</h1> -->
-      <!-- <div ng-hide="currentChoice.answered"> -->
-        <!-- <h2>{{ currentChoice.message }}</h2> -->
-        <!-- <h3>{{ currentChoice.decision.question }}</h3> -->
-      	<!-- <button ng-repeat="choice in currentChoice.decision.choices" -->
-          <!-- ng-click="choose(choice)"> -->
-          <!-- {{ choice.choice }} -->
-        <!-- </button> -->
-      <!-- </div> -->
+      <message ng-repeat="message in messages track by $index" message="message" ng-hide="message.seen"></message>
+      <decision ng-repeat="decision in decisions track by $index" decision="decision" game="game" updateDecisionAnsweredStatus="updateDecisionAnsweredStatus(decision)" ng-hide="decision.answered"></decision>
     </div>
   </div>
 </div>

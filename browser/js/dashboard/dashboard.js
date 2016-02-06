@@ -14,16 +14,17 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game, Notification) {
-  // console.log("game", game);
+app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game) {
+  console.log("game", game);
+
   $rootScope.inGame = true;
-  // $scope.gameTitle = game.title;
+  $scope.gameTitle = game.title;
   $scope.game = game;
   $scope.character = character;
-  console.log("GAME IN dashboard IS", game.$id);
-  console.log("CHARACTER IN dashboard IS", character.$id);
+  $scope.messages = [];
+  $scope.decisions = [];
 
-  var gameRef = new Firebase('https://character-test.firebaseio.com/');
+  var gameRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id);
   var myCharacterRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id);
   var myMessageRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/message');
   var myDecisionRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/decisions');
@@ -32,13 +33,26 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   var myMessagesObj = $firebaseObject(myMessageRef);
   var myDecisionObj = $firebaseObject(myDecisionRef);
 
-  $scope.messages = [];
-  $scope.decisions = [];
+  $scope.updateDecisionAnsweredStatus = function(decision) {
+    console.log("decision inside of updateDecisionAnsweredStatus");
+    console.log(decision);
+  };
 
   myMessageRef.on('child_added', function(childSnapshot) {
-    console.log("New message added!");
     console.log(childSnapshot.val());
-    $scope.messages.push(Notification(childSnapshot.val().message));
+    $scope.messages.push(childSnapshot.val().message);
+  });
+
+  myDecisionRef.on('child_added', function(childSnapshot) {
+    console.log(childSnapshot.val());
+    $scope.decisions.push(childSnapshot.val());
+  });
+
+  // This might happen if a particular decision gets answered set to 'true'.
+  myDecisionRef.on('child_changed', function(childSnapshot) {
+    console.log("Decision changed!");
+    console.log(childSnapshot.val());
+    // $scope.decisions.
   });
 
   // if (myDecisionRef.on) {
@@ -69,14 +83,4 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   // console.log($scope.choices);
 
   // $scope.currentChoice = $scope.choices[$scope.choices.length - 1];
-
-
-  // //the function that is called when a choice is chosen, so that the corresponding reaction function can be called
-  // $scope.choose = function(choice) {
-  //   if (choice.willTrigger) eventFactory.triggerEvent(choice.willTrigger);
-  //   choice.eventId = $scope.currentChoice.eventId
-  //   gameRef.child('votes').child($scope.currentChoice.eventId).push(choice)
-  //   $scope.currentChoice.answered = true;
-  //   return choice.$value;
-  // };
 });

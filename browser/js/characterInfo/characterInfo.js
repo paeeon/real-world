@@ -70,7 +70,9 @@ app.controller('CharacterInfoController', function($scope, $state, character, ch
 
   $scope.$watch('numPlayersJoined', function(newValue, oldValue) {
     if (newValue === totalNumOfPlayerSlots) {
-      GameFactory.triggerGameStart()
+      console.log("stateParams.gameId…");
+      console.log($stateParams.gameId);
+      GameFactory.triggerGameStart($stateParams.gameId)
         .then(function() {
           $state.go('dashboard', {
             gameId: $stateParams.gameId,

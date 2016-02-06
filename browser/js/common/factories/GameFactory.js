@@ -4,8 +4,8 @@ app.factory('GameFactory', function($http, $firebaseObject) {
   };
 
   var fac = {
-    triggerGameStart: function() {
-      return $http.get('/api/game/start')
+    triggerGameStart: function(gameId) {
+      return $http.get('/api/game/start/' + gameId)
         .then(extractData);
     },
     getOneGame: function(gameId) {

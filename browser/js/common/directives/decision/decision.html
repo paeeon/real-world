@@ -1,0 +1,24 @@
+<div class="decision-inner clearfix">
+  <div class="decision pull-left">
+    <div class="decision-message" ng-show="messageExists">
+      <h4>{{ decision.message }}</h4>
+    </div>
+    <div class="question">
+      <h4>{{ decision.decision.question }}</h4>
+    </div>
+    <div class="options">
+      <div class="option" ng-repeat="choice in decision.decision.choices">
+        <input type="radio" name="selectionRadio" class="option-input radio" ng-model="selection.value" ng-value="choice">
+        <!-- value="{{choice.choice}}" -->
+        <label>{{ choice.choice }}</label>
+      </div>
+      <pre>{{ selection.value | json }}</pre>
+    </div>
+  </div>
+  <div class="pull-right">
+    <i class="fa fa-close" class="close-decision" ng-click="closeDecision()"></i>
+  </div>
+</div>
+<div class="decision-submit" ng-click="submitDecision()">
+  <span>Submit</span>
+</div>

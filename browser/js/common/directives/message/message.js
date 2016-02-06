@@ -1,15 +1,19 @@
-app.directive('message', function($rootScope, $state) {
+app.directive('message', function($rootScope, $state, $animate) {
 
   return {
     restrict: 'E',
-    scope: {},
+    scope: {
+      message: "="
+    },
     templateUrl: 'js/common/directives/message/message.html',
     link: function(scope, element, attrs) {
+
       scope.closeMessage = function() {
-        element.children('.close-message').on('click', function() {
-          element.remove();
-        });
-      }
+        $animate.addClass(element, 'animated fadeOutLeft')
+          .then(function() {
+            element.remove();
+          });
+      };
     }
 
   };

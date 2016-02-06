@@ -1,23 +1,30 @@
 @import '../variables';
+
 message {
   display: block;
-  background: white;
+  background: $light-blue;
   padding: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  margin-bottom: 15px;
   border: 0px;
   border-left: 4px solid teal;
   -webkit-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
   box-shadow: 0px 4px 5px 0px rgba(0, 0, 0, 0.75);
+
   h1, h2, h3, h4, h5, h6 {
     color: $rich-blue;
   }
-  .fade{
-    -webkit-transition: opacity 2s; /* For Safari 3.1 to 6.0 */
-    transition: opacity 2s;
-    opacity: 0;
+  .message {
+    width: calc(100% - 20px);
   }
+  h4 {
+    line-height: 1.4em;
+  }
+  -webkit-animation-duration: .5s;
+  -moz-animation-duration: .5s;
+  animation-duration: .5s;
 }
 
 message:after {

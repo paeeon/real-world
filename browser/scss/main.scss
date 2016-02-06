@@ -27,6 +27,14 @@ body {
   }
 }
 
+.spacer {
+  margin-top: 30px;
+}
+
+.big-spacer {
+  margin-top: 60px;
+}
+
 /* Font Styles */
 
 h1, h2, h3, h4, h5, h6 {
@@ -39,7 +47,7 @@ p, span {
   color: $aqua-blue;
 }
 
-@import 'notification';
+// @import 'lumx/_lumx';
 @import 'directives/main';
 @import 'home/main';
 @import 'about/main';

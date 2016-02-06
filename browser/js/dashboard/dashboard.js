@@ -14,7 +14,7 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game, Notification) {
+app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game) {
   // console.log("game", game);
   $rootScope.inGame = true;
   $scope.gameTitle = game.title;
@@ -34,9 +34,18 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   $scope.decisions = [];
 
   myMessageRef.on('child_added', function(childSnapshot) {
-    console.log("New message added!");
+    $scope.messages.push(childSnapshot.val().message);
+  });
+
+  myDecisionRef.on('child_added', function(childSnapshot) {
+    $scope.decisions.push(childSnapshot.val());
+  });
+
+  // This might happen if a particular decision gets answered set to 'true'.
+  myDecisionRef.on('child_changed', function(childSnapshot) {
+    console.log("Decision changed!");
     console.log(childSnapshot.val());
-    $scope.messages.push(Notification(childSnapshot.val().message));
+    // $scope.decisions.
   });
 
   // if (myDecisionRef.on) {

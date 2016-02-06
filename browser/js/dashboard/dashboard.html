@@ -2,7 +2,8 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <!-- <message ng-repeat="message in messages"></message> -->
+      <message ng-repeat="message in messages track by $index" message="message" ng-hide="message.seen"></message>
+      <decision ng-repeat="decision in decisions track by $index" decision="decision" ng-hide="decision.answered"></decision>
       <!-- <p>Test</p> -->
       <!-- anything typed in here is magically saved to our Firebase database! -->
       <!-- <input type="text" ng-model="data.text" /> -->

@@ -17,9 +17,11 @@ app.config(function($stateProvider) {
 app.controller('DashBoardController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game, Notification) {
   // console.log("game", game);
   $rootScope.inGame = true;
-  $scope.gameTitle = game.title;
-
+  // $scope.gameTitle = game.title;
+  $scope.game = game;
   $scope.character = character;
+  console.log("GAME IN dashboard IS", game.$id);
+  console.log("CHARACTER IN dashboard IS", character.$id);
 
   var gameRef = new Firebase('https://character-test.firebaseio.com/');
   var myCharacterRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id);

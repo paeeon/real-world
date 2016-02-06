@@ -1,11 +1,18 @@
-app.directive('navbar', function ($rootScope, AuthService, AUTH_EVENTS, $state) {
+app.directive('navbar', function ($rootScope, AuthService, AUTH_EVENTS, $state, GameFactory, $stateParams) {
 
     return {
         restrict: 'E',
         scope: {},
         templateUrl: 'js/common/directives/navbar/navbar.html',
-        link: function (scope) {
+        link: function (scope, el, attrs) {
 
+            scope.gameId = $stateParams.gameId;
+
+            scope.characterId = $stateParams.characterId;
+
+            console.log("GAME IS:", scope.gameId);
+
+            // scope.game = attrs.game;
             // scope.items = [
             //     { label: 'Home', state: 'home' },
             //     { label: 'About', state: 'about' },

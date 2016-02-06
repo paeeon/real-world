@@ -23,14 +23,16 @@ app.directive('decision', function($rootScope, $state, $animate) {
 
       // the function that is called when a choice is chosen, so that the corresponding reaction function can be called
       scope.submitDecision = function() {
+        console.log("scope.decision");
+        console.log(scope.decision);
         var gameRef = new Firebase('https://character-test.firebaseio.com/games/' + scope.game.$id);
         var choice = {
           _id: scope.selection.value._id,
           choice: scope.selection.value.choice
         };
-        gameRef.child('votes').child(choice._id).push(choice)
+        return gameRef.child('votes').child(scope.decision.eventId).push(choice)
           .then(function() {
-            return $animate.addClass(element, 'animated fadeOutLeft')
+            return $animate.addClass(element, 'animated fadeOutLeft');
           }).then(function() {
             element.remove();
           });

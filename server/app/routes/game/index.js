@@ -123,14 +123,14 @@ var eventHandler = {
 	}
 
 }
-
+var timesCalled = 0;
 // Function for starting timed events
 var startTimed = function() {
 
   console.log("startTimed being called right now…");
 
   var timed = [];
-
+  timesCalled++
   // Loop through the keys of each of the game's events
   Object.keys(game.events).forEach(function(eventKey) {
     // If a game event has a 'triggeredBy' attribute set to "time",
@@ -166,6 +166,7 @@ var startTimed = function() {
       var currentEvent = timed.pop();
       // console.log("CURRENT EVENT IS", currentEvent);
       eventHandler[currentEvent.type](currentEvent)
+      console.log(currentEvent)
       gameRef.child("pastEvents").child("timed").push({
         pastEvent: {
           name: currentEvent.eventThatOccurred || "",
@@ -175,7 +176,7 @@ var startTimed = function() {
         }
       });
     }
-
+    console.log(timesCalled)
   }, 500)
 };
 

@@ -42,7 +42,7 @@ router.put('/gameInfo/:gameId/:prop', function(req, res, next) {
   .then(function(game) {
     game[prop].push(updateId);
     return game.save();
-  }).then(function(res) {
+  }).then(function(response) {
     res.status(200).json('Update successful');
   }).then(null, next);
 });

@@ -1,43 +1,48 @@
-<form id="event-form" name="eventForm" ng-submit="nextStep()">
-
-    <!-- <alert type="danger" ng-show="error">
-        {{ error }}
-    </alert> -->
-    <h2>EVENT DETAILS</h2>
-    <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" ng-model="event.title" class="form-control" id="title" placeholder="Enter title">
-    </div>
-
-    <h3>Effect
-      <button type="button" name="addEffect">+</button>
-    </h3>
-
-    <div class="form-group">
-        <label for="type">Text or Decision?</label>
-        <select type="text" ng-model="event.type" class="form-control" id="type">
-          <option>Text</option>
-          <option>Decision</option>
-        </select>
-    </div>
-    <div class="form-group">
-      <label for="targets">Characters Involved</label>
-      <select type="text" ng-model="event.targets" class="form-control" id="targets" placeholder="Characters involved">
-        <option ng-repeat="character in characters track by $index">{{character.name}}</option>
-      </select>
-    </div>
-    <div class="form-group">
-        <label for="event-eventThatOccurred">Message to Characters</label>
-        <textarea type="t" ng-model="event.eventThatOccurred" class="form-control" id="event-eventThatOccurred" placeholder="Message"></textarea>
-    </div>
-    <h4>Below only shows up if decision is selected in Text or Decision</h4>
-    <div class="form-group">
-        <label for="event-question">Question</label>
-        <textarea type="text" ng-model="event.decision.question" class="form-control" id="event-question" placeholder="Question"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="event-choices">Choices</label>
-        <input type="text" ng-model="event.decision.choices" class="form-control" id="event-choices" placeholder="Choice">
-    </div>
-    <button type="submit" class="btn btn-default">Next step</button>
-</form>
+<div class="container">
+    <form id="event-form" name="eventForm" ng-submit="nextStep()">
+        <div>
+            <!-- <alert type="danger" ng-show="error">
+          {{ error }}
+      </alert> -->
+            <h2>EVENT DETAILS</h2>
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" ng-model="name.title" class="form-control" id="title" placeholder="Enter title">
+            </div>
+            <div ng-repeat="event in events track by $index">
+                <h3>Effect
+        <button type="button" ng-click="addEffect()" name="addEffect">+</button>
+      </h3>
+                <div class="form-group">
+                    <label for="type">Text or Decision?</label>
+                    <select type="text" ng-model="event.type" class="form-control" id="type">
+                        <option>Text</option>
+                        <option>Decision</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="targets">Choose Characters</label>
+                    <select type="text" ng-options="character.name for character in listCharacters($index) "ng-model="event.charToAdd" class="form-control" id="targets" placeholder="Characters involved">
+                    </select>
+                    <h3><button type="button" ng-click="addCharacter(event.charToAdd, event.targets, cloneLists[$index])">+</button></h3>
+                </div>
+                <div><span ng-repeat="target in event.targets track by $index">{{target.name}}<button type="button" ng-click="removeChar($index, event.targets, cloneLists[$parent.$index])">-</button>  </span></div>
+                <div class="form-group">
+                    <label for="event-eventThatOccurred">Message to Characters</label>
+                    <textarea type="t" ng-model="event.eventThatOccurred" class="form-control" id="event-eventThatOccurred" placeholder="Message"></textarea>
+                </div>
+                <h4>Below only shows up if decision is selected in Text or Decision</h4>
+                <div class="form-group">
+                    <label for="event-question">Question</label>
+                    <textarea type="text" ng-model="event.decision.question" class="form-control" id="event-question" placeholder="Question"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="event-choices">Choices</label>
+                    <input type="text" ng-model="event.decision.choices" class="form-control" id="event-choices" placeholder="Choice">
+                </div>
+                <button type="button" ng-click="removeEffect($index)">-</button>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-default">Next step</button>
+    </form>
+</div>

@@ -23,11 +23,23 @@ var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);
 
+var idFix = function(game) {
+  // For each key in game…
+  for (var key in game) {
+    // If the key is __id, set its value to a toString-ified version of itself
+    if (key === "_id") {
+      game[key] = game[key].toString();
+    // If the value of a key is an object, perform idFix on that object.
+    } else if (typeof game[key] === 'object') {
+      idFix(game[key]);
+    }
+  }
+};
+
 router.get('/build/:instructionId', function(req, res, next) {
 	Game.findById(req.params.instructionId)
 	  .lean()
-	  .populate('events')
-	  .populate('characters')
+	  .populate('events characters')
 	  .then(function(foundGame) {
 	    game = foundGame;
 	    var characterMap = {};
@@ -56,12 +68,11 @@ router.get('/build/:instructionId', function(req, res, next) {
 	    game.characters = characterMap;
 	    game.events = eventMap;
       game.resolveTable = resolve;
-	    // console.log("GAME IS", game);
-	    characters = _.shuffle(game.characters);
+      characters = _.shuffle(game.characters);
+      idFix(game);
 	    myFirebaseRef.child('games').push(game)
 	    .then(function(builtGame){
 	    	gameRef = builtGame;
-	    	console.log("THIS IS THE RESULT", builtGame);
 	    	gameID = gameRef.key();
 	    	randomShortId = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@%&+?'});
 	    	gameShortIdConverter[randomShortId] = gameID;
@@ -84,6 +95,7 @@ var resolveEvent = function(eventToResolve) {
 
 function textEvents(textEvent) {
   textEvent.targets.forEach(function(targetId){
+    // console.log("THIS IS THE TARGET", targetId); //this is the problem with all of the events going twice. is it async? is it too many targets?
     targetId = targetId.toString();
     gameRef.child('characters').child(targetId).child("message").push({message:textEvent.eventThatOccurred});
   });
@@ -92,8 +104,9 @@ function textEvents(textEvent) {
 var eventHandler = {
 	// pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
 	text : function(textEvent){
-    if (textEvent.needsResolution) resolveEvent(textEvent);
-    else textEvents(textEvent);
+    // console.log("THIS IS THE TEXT EVENT", textEvent);
+    if (textEvent.needsResolution) resolveEvent(textEvent); //investigate this further
+    else textEvents(textEvent); //investigate this further
 	},
 
 	// pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
@@ -149,7 +162,9 @@ var startTimed = function() {
     //      (i.e., "The winners have been announced!"), or an empty string (if nothing exists on that
     //      object at the requested location).
     if (Date.now() - startTime >= timed[timed.length - 1].timed.timeout) {
+      console.log("TIMED EVENTS IS", timed); //log timed.length every time it is seen!!!!!!!!
       var currentEvent = timed.pop();
+      // console.log("CURRENT EVENT IS", currentEvent);
       eventHandler[currentEvent.type](currentEvent)
       gameRef.child("pastEvents").child("timed").push({
         pastEvent: {
@@ -170,7 +185,6 @@ router.post('/:gameId/register-character', function(req, res, next){
   // characters is a shuffled array of all the characters in this game
   // If there are characters to fill (that have not been assigned),
 	if (characters.length > 0) {
-	console.log("characters are", characters);
     character = characters.pop();
     myFirebaseRef.child("games").child(gameID).child("characters").child(character._id.toString()).update({"playerName": req.body.playerName, "playerNumber": req.body.playerNumber});
 		res.status(201).json({_id:character._id});

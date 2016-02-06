@@ -114,6 +114,8 @@ var eventHandler = {
 // Function for starting timed events
 var startTimed = function() {
 
+  console.log("startTimed being called right now…");
+
   var timed = [];
 
   // Loop through the keys of each of the game's events
@@ -181,7 +183,10 @@ router.post('/:gameId/register-character', function(req, res, next){
 
 var gameStarted = false;
 router.get('/start', function(req, res, next) {
-  if (!gameStarted) startTimed();
+  if (!gameStarted) {
+   startTimed();
+   gameStarted = true;
+  }
   res.status(200).send('game started')
 });
 

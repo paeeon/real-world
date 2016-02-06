@@ -7,9 +7,12 @@
       <h4>{{ decision.decision.question }}</h4>
     </div>
     <div class="options">
-      <label class="option" ng-repeat="choice in decision.decision.choices">
-        <input type="checkbox" checklist-model="selection" checklist-value="choice.choice"> {{ choice.choice }}
-      </label>
+      <div class="option" ng-repeat="choice in decision.decision.choices">
+        <input type="radio" name="selectionRadio" class="option-input radio" ng-model="selection.value" ng-value="choice">
+        <!-- value="{{choice.choice}}" -->
+        <label>{{ choice.choice }}</label>
+      </div>
+      <pre>{{ selection.value | json }}</pre>
     </div>
   </div>
   <div class="pull-right">

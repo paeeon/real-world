@@ -1,7 +1,7 @@
 @import '../variables';
 decision {
   display: block;
-  background: #DCF1D9;
+  background: $light-green;
   margin-bottom: 15px;
   border: 0px;
   border-left: 4px solid green;
@@ -16,9 +16,9 @@ decision {
   h6 {
     color: $rich-blue;
   }
-  label.option {
-    display: block;
+  .option label {
     color: $rich-blue;
+    font-size: 16px;
   }
   i.close-decision {
     color: green;
@@ -35,8 +35,9 @@ decision {
     width: 100%;
     padding: 15px;
     background: white;
-    border-top: 1px solid darken(#DCF1D9, 10%);
+    border-top: 1px solid darken($light-green, 10%);
     span {
+      font-size: 16px;
       color: $dark-blue;
     }
   }

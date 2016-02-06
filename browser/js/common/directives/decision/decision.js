@@ -4,11 +4,13 @@ app.directive('decision', function($rootScope, $state, $animate) {
     restrict: 'E',
     scope: {
       decision: '=',
-      game: '=',
-      updateDecisionAnsweredStatus: '&'
+      game: '='
     },
     templateUrl: 'js/common/directives/decision/decision.html',
     link: function(scope, element, attrs) {
+
+      console.log("scope.decision…");
+      console.log(scope.decision);
 
       scope.closeDecision = function() {
         $animate.addClass(element, 'animated fadeOutLeft')
@@ -17,27 +19,20 @@ app.directive('decision', function($rootScope, $state, $animate) {
           });
       };
 
-      console.log("scope.decisionId");
-      console.log(scope.decisionId);
-
       scope.selection = {};
-
-      console.log("scope.decision");
-      console.log(scope.decision);
-
-      console.log("scope.character");
-      console.log(scope.character);
 
       // the function that is called when a choice is chosen, so that the corresponding reaction function can be called
       scope.submitDecision = function() {
-        console.log("scope.selection.value");
-        console.log(scope.selection.value);
+        console.log("scope.decision");
+        console.log(scope.decision);
         var gameRef = new Firebase('https://character-test.firebaseio.com/games/' + scope.game.$id);
-        gameRef.child('votes').child(scope.selection.value._id.id).push(scope.selection.value)
+        var choice = {
+          _id: scope.selection.value._id,
+          choice: scope.selection.value.choice
+        };
+        return gameRef.child('votes').child(scope.decision.eventId).push(choice)
           .then(function() {
-            return updateDecisionAnsweredStatus();
-          }).then(function() {
-            return $animate.addClass(element, 'animated fadeOutLeft')
+            return $animate.addClass(element, 'animated fadeOutLeft');
           }).then(function() {
             element.remove();
           });

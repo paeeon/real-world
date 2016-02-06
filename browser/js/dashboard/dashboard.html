@@ -3,7 +3,7 @@
   <div class="row">
     <div class="col-xs-12">
       <message ng-repeat="message in messages track by $index" message="message" ng-hide="message.seen"></message>
-      <decision ng-repeat="decision in decisions track by $index" decision="decision" game="game" updateDecisionAnsweredStatus="updateDecisionAnsweredStatus(decision)" ng-hide="decision.answered"></decision>
+      <decision ng-repeat="decision in decisions track by $index" decision="decision" game="game" ng-hide="decision.answered"></decision>
     </div>
   </div>
 </div>

@@ -9,8 +9,8 @@ app.config(function ($stateProvider) {
 app.controller('buildCharacter', function($scope, $q, $state, $stateParams, gameBuildFactory) {
   var gameId = $stateParams.gameId;
   $scope.characters = [{}];
-  console.log(gameId)
-  $scope.thingthatwillfail = function(){console.log($scope.characters)};
+
+  //add new character to game
   $scope.addNew = function(){
     $scope.characters.push({});
   }
@@ -31,7 +31,7 @@ app.controller('buildCharacter', function($scope, $q, $state, $stateParams, game
       });
       return $q.all(characterPush);
     }).then(function(resolved) {
-      // $state.go('buildEvent', {gameId: gameId});
+      $state.go('buildEvent', {gameId: gameId});
     }).then(null, console.log);
   };
 });

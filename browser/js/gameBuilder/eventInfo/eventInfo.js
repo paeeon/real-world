@@ -12,14 +12,15 @@ app.config(function ($stateProvider) {
   });
 });
 
-app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, gameBuildFactory) {
+app.controller('buildEventCtrl', function($scope, $stateParams, $state, characters, $q, gameBuildFactory) {
   $scope.events = [{targets:[], decision:{choices:[]}}];
-
   var gameId = $stateParams.gameId;
 
   $scope.characters = characters;
   $scope.cloneLists = [];
 
+// Add an effect for this event. Each effect will act as its own
+// "event" in the game
   $scope.addEffect = function(){
     $scope.events.push({targets:[], decision:{choices:[]}});
   }
@@ -28,15 +29,15 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, 
     if($scope.events.length > 1) $scope.events.splice(index,1);
   }
  
+ // dynamcially populate the character list for each added effect
   $scope.listCharacters = function(index){
     $scope.cloneLists.push($scope.characters.slice(0))
     return $scope.cloneLists[index]
   }
  
+ // add character to effect
   $scope.addCharacter = function(character, targets, targetGroup){
-    console.log(character)
     character = angular.fromJson(character);
-    console.log(character)
     var index = _.findIndex(targetGroup, {name: character["name"]});
     targetGroup.splice(index,1);
     targets.push(character)
@@ -48,6 +49,7 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, 
     targets.splice(index,1);
   }
 
+// add a choice to a decision event
   $scope.addChoice = function(currentEvent){
     console.log(currentEvent)
     currentEvent.decision.choices.push({choice:currentEvent.currentChoice})
@@ -58,26 +60,38 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, 
     currentEvent.decision.choices.splice(index,1)
   }
 
+//value toggles display of decision form
   $scope.isDecision = function(currentEvent){
-    if (currentEvent.type === "Decision") return true;
+    if (currentEvent.type === "decision") return true;
     else return false;
   }
 
   $scope.submitEvents = function() {
-    // create events
-    var eventPromises = $scope.events.map(function(event) {
-      return gameBuildFactory.createEvent(event);
+    $scope.events.forEach(function(currentEvent){
+      console.log(currentEvent)
+      // place title on events
+      currentEvent.title = $scope.name.title;
+      //reassign targets to be solely character IDs
+      currentEvent.targets = currentEvent.targets.map(function(target){
+        return target._id;
+      })
+    })
+    console.log($scope.events)
+    var eventPromises = $scope.events.map(function(eventA) {
+      return gameBuildFactory.createEvent(eventA);
     });
+    // create events
     return $q.all(eventPromises)
     .then(function(resolvedEvents) {
+      console.log(resolvedEvents)
       // use created events to push ids onto game.events
-      var eventPush = resolvedEvents.map(function(event) {
-        return gameBuildFactory.pushEventToGame(gameId, event._id);
+      var eventPush = resolvedEvents.map(function(eventA) {
+        return gameBuildFactory.pushEventToGame(gameId, eventA._id);
       });
       return $q.all(eventPush);
     }).then(function(resolved) {
-      // TODO: change this state.go?
-      state.go('eventDetails', {gameId: gameId});
+      $state.go('eventDragDrop', {gameId: gameId});
     }).then(null, console.log);
   };
+
 });

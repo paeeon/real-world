@@ -33,6 +33,22 @@ app.factory('gameBuildFactory', function($http) {
     getGameEvents: function(gameId) {
       return $http.get('/api/gameBuilder/' + gameId + '/events')
       .then(function(res){ return res.data});
+    },
+    nestedList: function(theEvent) {
+        var oneEvent = theEvent;
+        if (oneEvent.type === 'choice') {
+          oneEvent.columns = [oneEvent.decision.choices];
+          oneEvent.columns[0].map(function(oneChoice) {
+            var choice = oneChoice;
+            choice.title = choice.choice;
+            choice.type = 'text';
+            choice.columns = [[]];
+            return choice;
+          });
+        } if (oneEvent.type === 'text') {
+          oneEvent.columns = [[]];
+        }
+        return oneEvent;
     }
   };
 });

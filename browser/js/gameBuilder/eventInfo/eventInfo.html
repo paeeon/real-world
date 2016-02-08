@@ -16,13 +16,13 @@
                 <div class="form-group">
                     <label for="type">Text or Decision?</label>
                     <select type="text" ng-model="event.type" class="form-control" id="type">
-                        <option>Text</option>
-                        <option>Decision</option>
+                    <option>text</option>
+                    <option>decision</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="targets">Choose Characters</label>
-                    <select type="text" ng-options="character.name for character in listCharacters($index) "ng-model="event.charToAdd" class="form-control" id="targets" placeholder="Characters involved">
+                    <select type="text" ng-options="character.name for character in listCharacters($index)" ng-model="event.charToAdd" class="form-control" id="targets" placeholder="Characters involved">
                     </select>
                     <h3><button type="button" ng-click="addCharacter(event.charToAdd, event.targets, cloneLists[$index])">+</button></h3>
                 </div>

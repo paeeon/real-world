@@ -26,7 +26,7 @@ router.post('/characterInfo', function(req, res, next) {
 // create events
 // POST /api/gameBuilder/eventInfo
 router.post('/eventInfo', function(req, res, next) {
-  Character.create(req.body)
+  Event.create(req.body)
   .then(function(createdEvent) {
     res.status(201).json(createdEvent);
   }).then(null, next);

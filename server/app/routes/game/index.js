@@ -84,10 +84,10 @@ router.get('/build/:instructionId', function(req, res, next) {
       // });
       randomShortId = chance.string({
         length: 4,
-        pool: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+        pool: 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
       });
       gameShortIdConverter[randomShortId] = gameID;
-      return myFirebaseRef.child('games').child("gameShortIdConverter").set(gameShortIdConverter)
+      return myFirebaseRef.child('games').child("gameShortIdConverter").update(gameShortIdConverter)
     }).then(function() {
       gameShortIdConverter = {};
       res.json(gameID);
@@ -139,7 +139,7 @@ var eventHandler = {
   }
 
 }
-
+var timesCalled = 0;
 // Function for starting timed events
 var startTimed = function(gameId) {
 
@@ -153,7 +153,6 @@ var startTimed = function(gameId) {
   var game = games[gameId];
   console.log("Here is the game…");
   console.log(game);
-
   // Loop through the keys of each of the game's events
   Object.keys(game.events).forEach(function(eventKey) {
     // If a game event has a 'triggeredBy' attribute set to "time",
@@ -201,7 +200,7 @@ var startTimed = function(gameId) {
         }
       });
     }
-
+    console.log(timesCalled)
   }, 500)
 };
 

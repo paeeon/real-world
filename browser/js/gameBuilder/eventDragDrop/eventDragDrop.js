@@ -13,6 +13,8 @@ app.config(function($stateProvider) {
 });
 
 app.controller('eventDragDropCtrl', function($scope, $state, gameBuildFactory, events) {
+  console.log(events);
+
   $scope.eventList = events.map(function(theEvent) {
     return gameBuildFactory.nestedList(theEvent);
   });

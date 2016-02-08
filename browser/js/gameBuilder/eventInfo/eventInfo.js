@@ -12,7 +12,7 @@ app.config(function ($stateProvider) {
   });
 });
 
-app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, gameBuildFactory) {
+app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, gameBuildFactory, $state) {
   $scope.events = [{targets:[], decision:{choices:[]}}];
 
   var gameId = $stateParams.gameId;
@@ -27,12 +27,12 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, 
   $scope.removeEffect = function(index){
     if($scope.events.length > 1) $scope.events.splice(index,1);
   }
- 
+
   $scope.listCharacters = function(index){
     $scope.cloneLists.push($scope.characters.slice(0))
     return $scope.cloneLists[index]
   }
- 
+
   $scope.addCharacter = function(character, targets, targetGroup){
     console.log(character)
     character = angular.fromJson(character);
@@ -77,7 +77,7 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, 
       return $q.all(eventPush);
     }).then(function(resolved) {
       // TODO: change this state.go?
-      state.go('eventDetails', {gameId: gameId});
+      $state.go('eventDragDrop', {gameId: gameId});
     }).then(null, console.log);
   };
 });

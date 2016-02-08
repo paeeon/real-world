@@ -31,7 +31,7 @@ app.controller('buildCharacter', function($scope, $q, $state, $stateParams, game
       });
       return $q.all(characterPush);
     }).then(function(resolved) {
-      // $state.go('buildEvent', {gameId: gameId});
+      $state.go('buildEvent', {gameId: gameId});
     }).then(null, console.log);
   };
 });

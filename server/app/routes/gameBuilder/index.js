@@ -64,6 +64,8 @@ router.get('/:gameId/events', function(req, res, next) {
   var gameId = req.params.gameId;
   Game.findById(gameId).populate('events').exec()
   .then(function(foundGame) {
+    console.log("FOUND GAME!");
+    console.log(foundGame);
     res.status(200).json(foundGame.events);
   }).then(null, next);
 });

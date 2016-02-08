@@ -84,10 +84,10 @@ router.get('/build/:instructionId', function(req, res, next) {
       // });
       randomShortId = chance.string({
         length: 4,
-        pool: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+        pool: 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
       });
       gameShortIdConverter[randomShortId] = gameID;
-      return myFirebaseRef.child('games').child("gameShortIdConverter").set(gameShortIdConverter)
+      return myFirebaseRef.child('games').child("gameShortIdConverter").update(gameShortIdConverter)
     }).then(function() {
       gameShortIdConverter = {};
       res.json(gameID);

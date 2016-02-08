@@ -1,5 +1,13 @@
 <div class="container">
   <div class="row">
+    <div class="short-id-box text-center">
+      <span class="description">Invite friends to join this game with this code…</span>
+      <br>
+      <span id="short-id">{{ shortId }}</span>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="row">
     <div class="col-xs-12">
 
       <p>Your character will be…</p>
@@ -25,13 +33,17 @@
         <li ng-repeat="limitation in character.limitations">{{limitation.description}}</li>
       </ul>
 
-      <button class="btn btn-primary btn-block" ng-click="imReady()" ng-hide="ready">I'm Ready to Start!</button>
+      <div class="spacer"></div>
+
+      <button class="btn btn-aqua btn-block" ng-click="imReady()" ng-hide="ready">I'm Ready to Start!</button>
+
       <div class="waiting-screen text-center" ng-show="ready">
         <!-- <span us-spinner="{radius:30, width:8, length: 16, color: 'white'}"></span> -->
-        <h4 class="waiting-message text-center">Waiting for game to start…</h4><br>
+        <h4 class="waiting-message text-center">Waiting for game to start…</h4>
+        <br>
         <h4 class="ready-characters text-center">{{numPlayersJoined}}/{{numCharacters}} characters ready</h4>
         <!-- Remove this first button, it's just for testing -->
-        <button id="set-users-as-ready" class="btn btn-primary btn-block" ng-click="fastSetup()">Automatically set all users to be "Ready"</button>
+        <button id="set-users-as-ready" class="btn btn-aqua btn-block" ng-click="fastSetup()">Automatically set all users to be "Ready"</button>
       </div>
       <div class="dim" ng-show="ready"></div>
     </div>

@@ -7,13 +7,19 @@ app.config(function($stateProvider) {
       gamesCharacters: function($stateParams) {
         console.log("gameID is", $stateParams.gameId);
         return new Firebase("https://character-test.firebaseio.com/games/" + $stateParams.gameId + "/characters");
+      },
+      shortId: function($stateParams, GameFactory) {
+        return GameFactory.getShortId($stateParams.gameId);
       }
     }
   });
 });
 
-app.controller('regController', function($scope, $http, $state, characterFactory, $stateParams, $firebaseArray, gamesCharacters) {
+app.controller('regController', function($scope, $http, $state, characterFactory, $stateParams, $firebaseArray, gamesCharacters, shortId) {
   $scope.gameFull = false;
+  $scope.shortId = shortId;
+  console.log("Here is the shortId")
+  console.log(shortId);
 
   $firebaseArray(gamesCharacters).$loaded()
   .then(function(characters) {

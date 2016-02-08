@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 });
 
 var games = {};
-
+var gameStarted = {};
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
 var game, characters, gameID, gameRef, randomShortId, startTime;
@@ -78,6 +78,7 @@ router.get('/build/:instructionId', function(req, res, next) {
       gameRef = builtGame;
       gameID = gameRef.key();
       games[gameID] = game;
+      gameStarted[gameID] = false;
       // gameRef.once("value", function(data) {
       //   games[gameID] = data.val();
       // });
@@ -142,10 +143,16 @@ var eventHandler = {
 // Function for starting timed events
 var startTimed = function(gameId) {
 
+  console.log("Has this game already started?");
+  console.log(gameStarted[gameId]);
+  gameStarted[gameId] = true;
+
   console.log("startTimed being called right now…");
 
   var timed = [];
   var game = games[gameId];
+  console.log("Here is the game…");
+  console.log(game);
 
   // Loop through the keys of each of the game's events
   Object.keys(game.events).forEach(function(eventKey) {
@@ -180,7 +187,7 @@ var startTimed = function(gameId) {
     //      (i.e., "The winners have been announced!"), or an empty string (if nothing exists on that
     //      object at the requested location).
     if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout) {
-      console.log("TIMED EVENTS IS", timed); //log timed.length every time it is seen!!!!!!!!
+      // console.log("TIMED EVENTS IS", timed); //log timed.length every time it is seen!!!!!!!!
       var currentEvent = timed.pop();
       // console.log("CURRENT EVENT IS", currentEvent);
       eventHandler[currentEvent.type](gameId, currentEvent)
@@ -218,18 +225,14 @@ router.post('/:gameId/register-character', function(req, res, next) {
   }
 });
 
-var gameStarted = {};
-
-// var gameStarted = false;
 router.get('/start/:gameId', function(req, res, next) {
 
   // If this game has not already started, start its timer
   if (!gameStarted[req.params.gameId]) {
     startTimed(req.params.gameId);
-    gameStarted[req.params.gameId] = true;
   }
 
-  res.status(200).send('game started')
+  res.status(200).send('game started');
 });
 
 router.get('/:gameId', function(req, res, next) {

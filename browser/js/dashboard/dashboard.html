@@ -1,9 +1,9 @@
-<infobar></infobar>
+<infobar game="game"></infobar>
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <message ng-repeat="message in messages track by $index" message="message" ng-hide="message.seen"></message>
-      <decision ng-repeat="decision in decisions track by $index" decision="decision" game="game" ng-hide="decision.answered"></decision>
+      <message ng-repeat="message in messages track by $index" message="message" game="game" character="character" ng-hide="message.seen" ng-cloak></message>
+      <decision ng-repeat="decision in decisions track by $index" decision="decision" game="game" character="character" ng-hide="decision.answered" ng-cloak></decision>
     </div>
   </div>
 </div>

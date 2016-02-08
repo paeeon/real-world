@@ -18,11 +18,10 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   console.log("game", game);
 
   $rootScope.inGame = true;
-  $scope.gameTitle = game.title;
   $scope.game = game;
   $scope.character = character;
-  $scope.messages = [];
-  $scope.decisions = [];
+  // $scope.messages = [];
+  // $scope.decisions = [];
 
   var gameRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id);
   var myCharacterRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id);
@@ -33,27 +32,32 @@ app.controller('DashBoardController', function($scope, $firebaseObject, $firebas
   var myMessagesObj = $firebaseObject(myMessageRef);
   var myDecisionObj = $firebaseObject(myDecisionRef);
 
-  $scope.updateDecisionAnsweredStatus = function(decision) {
-    console.log("decision inside of updateDecisionAnsweredStatus");
-    console.log(decision);
-  };
+  $scope.messages = myMessagesObj;
+  $scope.decisions = myDecisionObj;
 
-  myMessageRef.on('child_added', function(childSnapshot) {
-    console.log(childSnapshot.val());
-    $scope.messages.push(childSnapshot.val().message);
-  });
 
-  myDecisionRef.on('child_added', function(childSnapshot) {
-    console.log(childSnapshot.val());
-    $scope.decisions.push(childSnapshot.val());
-  });
 
-  // This might happen if a particular decision gets answered set to 'true'.
-  myDecisionRef.on('child_changed', function(childSnapshot) {
-    console.log("Decision changed!");
-    console.log(childSnapshot.val());
-    // $scope.decisions.
-  });
+  // $scope.updateDecisionAnsweredStatus = function(decision) {
+  //   console.log("decision inside of updateDecisionAnsweredStatus");
+  //   console.log(decision);
+  // };
+
+  // myMessageRef.on('child_added', function(childSnapshot) {
+  //   console.log(childSnapshot.val());
+  //   $scope.messages.push(childSnapshot.val().message);
+  // });
+
+  // myDecisionRef.on('child_added', function(childSnapshot) {
+  //   console.log(childSnapshot.val());
+  //   $scope.decisions.push(childSnapshot.val());
+  // });
+
+  // // This might happen if a particular decision gets answered set to 'true'.
+  // myDecisionRef.on('child_changed', function(childSnapshot) {
+  //   console.log("Decision changed!");
+  //   console.log(childSnapshot.val());
+  //   $scope.decisions.
+  // });
 
   // if (myDecisionRef.on) {
   //   myDecisionRef.on('child_added', function(childSnapshot) {

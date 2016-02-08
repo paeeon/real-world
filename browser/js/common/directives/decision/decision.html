@@ -1,5 +1,5 @@
 <div class="decision-inner clearfix">
-  <div class="decision pull-left">
+  <div class="decision">
     <div class="decision-message" ng-show="messageExists">
       <h4>{{ decision.message }}</h4>
     </div>
@@ -12,11 +12,7 @@
         <!-- value="{{choice.choice}}" -->
         <label>{{ choice.choice }}</label>
       </div>
-      <pre>{{ selection.value | json }}</pre>
     </div>
-  </div>
-  <div class="pull-right">
-    <i class="fa fa-close" class="close-decision" ng-click="closeDecision()"></i>
   </div>
 </div>
 <div class="decision-submit" ng-click="submitDecision()">

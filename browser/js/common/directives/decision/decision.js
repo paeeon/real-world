@@ -1,30 +1,27 @@
-app.directive('decision', function($rootScope, $state, $animate) {
+app.directive('decision', function($rootScope, $state) {
 
   return {
     restrict: 'E',
     scope: {
       decision: '=',
-      game: '='
+      game: '=',
+      character: '='
     },
     templateUrl: 'js/common/directives/decision/decision.html',
     link: function(scope, element, attrs) {
 
-      console.log("scope.decision…");
+      console.log("Inside the decision directive");
+      console.log("scope.decision");
       console.log(scope.decision);
 
       scope.closeDecision = function() {
-        $animate.addClass(element, 'animated fadeOutLeft')
-          .then(function() {
-            element.remove();
-          });
+        element.remove();
       };
 
       scope.selection = {};
 
       // the function that is called when a choice is chosen, so that the corresponding reaction function can be called
       scope.submitDecision = function() {
-        console.log("scope.decision");
-        console.log(scope.decision);
         var gameRef = new Firebase('https://character-test.firebaseio.com/games/' + scope.game.$id);
         var choice = {
           _id: scope.selection.value._id,
@@ -32,7 +29,13 @@ app.directive('decision', function($rootScope, $state, $animate) {
         };
         return gameRef.child('votes').child(scope.decision.eventId).push(choice)
           .then(function() {
-            return $animate.addClass(element, 'animated fadeOutLeft');
+            return gameRef.child('characters').child(scope.character.$id).child('decisions').once("value");
+          }).then(function(snapshot) {
+            var decisionToUpdate;
+            snapshot.forEach(function(childSnapshot) {
+              if (childSnapshot.val().eventId === scope.decision.eventId) decisionToUpdate = childSnapshot.key();
+            });
+            return gameRef.child('characters').child(scope.character.$id).child('decisions').child(decisionToUpdate).update({answered: true});
           }).then(function() {
             element.remove();
           });

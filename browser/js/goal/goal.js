@@ -14,8 +14,8 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('GoalController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game, Notification) {
-  // console.log("game", game);
+app.controller('GoalController', function($scope, $firebaseObject, $firebaseArray, $http, $state, character, $rootScope, game) {
+  console.log("game", game);
 
   $scope.game = game;
   $scope.character = character;

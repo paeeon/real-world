@@ -253,6 +253,7 @@ var seedCharacters = function() {
 var seedEvents = function() {
   var events = [
     {
+      title: 'Introduction',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Introduce the event, Andrew, and Mr. Dog, and let everyone know that they will be voting on the three people who will be speaking at hiring day, so they should choose wisely! Let the networking begin!',
@@ -262,6 +263,7 @@ var seedEvents = function() {
         timeout: 0
       }
     }, {
+      title: 'Poll: Who presents first?',
       triggeredBy: 'time',
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will put the list of Fullstack students’ names into a poll and allow every user to vote, with Andrew’s vote counting for 3, Mr. Dog’s counting for 2, and everyone else’s counting for 1.',
@@ -291,6 +293,7 @@ var seedEvents = function() {
         timeout: 900
       }
     }, {
+      title: 'Presentation poll winners',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'These are the three winners: 1) Nicole, 2) Mike, 3) Lily',
@@ -300,6 +303,7 @@ var seedEvents = function() {
         timeout: 1020
       }
     }, {
+      title: 'Presentation prep',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'You are presenting! Go to the computer and load up your presentation. You will be presenting in the following order: 1) Nicole, 2) Mike, 3) Lily',
@@ -309,6 +313,7 @@ var seedEvents = function() {
         timeout: 1020
       }
     }, {
+      title: 'First presenter notification',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'You are presenting! Go present!',
@@ -318,6 +323,7 @@ var seedEvents = function() {
         timeout: 1200
       }
     }, {
+      title: 'First presenter announcement',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'First up, Nicole!',
@@ -327,6 +333,7 @@ var seedEvents = function() {
         timeout: 1200
       }
     }, {
+      title: 'Second presenter notification',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'You are presenting! Go present!',
@@ -336,6 +343,7 @@ var seedEvents = function() {
         timeout: 1500
       }
     }, {
+      title: 'Second presenter announcement',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Thank you for the presentation! Up next, Lily!',
@@ -345,6 +353,7 @@ var seedEvents = function() {
         timeout: 1500
       }
     }, {
+      title: 'Third presenter notification',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'You are presenting! Go present!',
@@ -354,6 +363,7 @@ var seedEvents = function() {
         timeout: 1800
       }
     }, {
+      title: 'Third presenter announcement',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Thank you for the presentation! Up next, Mike!',
@@ -363,6 +373,7 @@ var seedEvents = function() {
         timeout: 1800
       }
     }, {
+      title: 'Poll: Best presentation?',
       triggeredBy: 'time',
       type: 'choice',
       decision: {
@@ -391,6 +402,7 @@ var seedEvents = function() {
         timeout: 2100
       }
     }, {
+      title: 'Announce best presentation',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'The Best Presentation Award goes to: Lily!',
@@ -400,6 +412,7 @@ var seedEvents = function() {
         timeout: 2220
       }
     }, {
+      title: 'Begin networking',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Announce to everyone: Great! Now, everyone, this will be the networking portion of our day. Go out and mingle!',
@@ -409,6 +422,7 @@ var seedEvents = function() {
         timeout: 2250
       }
     }, {
+      title: 'Discuss hiring',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Networking time is up. Andrew and Mr. Dog, go and meet in private to discuss your hiring decision.',
@@ -418,6 +432,7 @@ var seedEvents = function() {
         timeout: 3000
       }
     }, {
+      title: 'Choose top hiring choices',
       triggeredBy: 'time',
       type: 'choice',
       decision: {
@@ -446,6 +461,7 @@ var seedEvents = function() {
         timeout: 3300
       }
     }, {
+      title: 'Make final hiring decision',
       triggeredBy: 'time',
       type: 'choice',
       decision: {
@@ -474,6 +490,7 @@ var seedEvents = function() {
         timeout: 3500
       }
     }, {
+      title: 'Hired student revealed',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Andrew hired: _______! The correct hire was: _____. (Either: Andrew wins! Or, personX wins!)',

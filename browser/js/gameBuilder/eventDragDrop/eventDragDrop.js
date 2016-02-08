@@ -12,21 +12,8 @@ app.config(function($stateProvider) {
 });
 
 app.controller('eventDragDropCtrl', function($scope, $state, gameBuildFactory, events) {
-  $scope.eventList = events.map(function(choiceEvent) {
-    var oneEvent = choiceEvent;
-    if (choiceEvent.type === 'choice') {
-      choiceEvent.columns = [choiceEvent.decision.choices];
-      choiceEvent.columns[0].map(function(oneChoice) {
-        var choice = oneChoice;
-        choice.title = choice.choice;
-        choice.type = 'text';
-        choice.columns = [[]];
-        return choice;
-      });
-    } if (choiceEvent.type === 'text') {
-      choiceEvent.columns = [[]];
-    }
-    return oneEvent;
+  $scope.eventList = events.map(function(theEvent) {
+    return gameBuildFactory.nestedList(theEvent);
   });
 
   $scope.models = {

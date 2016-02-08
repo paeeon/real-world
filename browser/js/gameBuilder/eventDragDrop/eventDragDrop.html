@@ -17,7 +17,6 @@
     </ul>
 </script>
 
-
 <!-- This template is responsible for rendering a container element. It uses
      the above list template to render each container column -->
 <script type="text/ng-template" id="container.html">
@@ -31,28 +30,8 @@
     </div>
 </script>
 
-<!-- Template for a normal list item -->
-<script type="text/ng-template" id="item.html">
-    <div class="item">Item {{item.id}}</div>
-</script>
-
 <!-- Sidebar -->
-<!-- <div class="col-md-2">
-
-  <div class="toolbox box box-grey box-padding">
-    <h3>New Elements</h3>
-    <ul>
-      <li ng-repeat="item in models.templates"
-      dnd-draggable="item"
-      dnd-effect-allowed="copy"
-      dnd-copied="item.id = item.id + 1"
-      >
-      <button type="button" class="btn btn-default btn-lg">{{item.type}}</button>
-    </li>
-  </ul>
-</div> -->
 <div class="col-md-3">
-
   <div class="toolbox box box-grey box-padding">
     <h3>Events</h3>
     <ul>
@@ -60,9 +39,7 @@
       element was created, dnd-copied is invoked and we generate the next id -->
       <li ng-repeat="item in eventList"
         dnd-draggable="item"
-        >
-        <!-- dnd-effect-allowed="copy"
-        dnd-copied="item.id = item.id + 1" -->
+        dnd-moved="eventList.splice($index, 1)">
         <button type="button" class="btn btn-default btn-lg">{{item.title}}</button>
       </li>
     </ul>
@@ -80,13 +57,12 @@
             </div>
         </div>
     </div>
-
     <div view-source="nested"></div>
-
     <h2>Generated Model</h2>
     <pre>{{modelAsJson}}</pre>
 </div>
 
+<!-- selected event description -->
 <div class="col-md-3">
   <div class="row">
     <div ng-if="models.selected" class="box box-grey box-padding">

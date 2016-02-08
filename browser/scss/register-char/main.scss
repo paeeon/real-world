@@ -1,0 +1,78 @@
+@import '../variables';
+
+.register {
+  .instruction {
+    color: white;
+    line-height: 1.4em;
+  }
+  label {
+    color: $medium-grey;
+  }
+}
+
+.underline {
+  text-decoration:underline;
+}
+
+.statBubbleContainer {
+    cursor:pointer;
+    text-align:center;
+    margin: 0 auto;
+    margin-top:10px;
+    display:block;
+    margin-left:36px;
+    margin-right:36px;
+    margin-bottom: 30px;
+}
+
+.nounderline {
+  text-decoration:none;
+}
+
+.statBubbleContainer h3 {
+  font-family: $font-stack;
+  font-size:14px;
+  color: $aqua-blue;
+  -webkit-transition:all 0.3s ease-in-out;
+  -ms-transition:all 0.3s ease-in-out;
+  -moz-transition:all 0.3s ease-in-out;
+  -o-transition:all 0.3s ease-in-out;
+  -apple-transition:all 0.3s ease-in-out;
+  transition:all 0.3s ease-in-out;
+}
+
+.statBubble {
+  margin: 0 auto;
+  width:150px;
+  height:150px;
+  border-radius:100%;
+  border:6px solid white;
+  background-repeat:no-repeat;
+  background-position:center 25px;
+  position:relative;
+  text-align:center;
+  -webkit-transition:all 0.3s ease-in-out;
+  -ms-transition:all 0.3s ease-in-out;
+  -moz-transition:all 0.3s ease-in-out;
+  -o-transition:all 0.3s ease-in-out;
+  -apple-transition:all 0.3s ease-in-out;
+  transition:all 0.3s ease-in-out;
+}
+
+.statNum {
+  position:absolute;
+  font-family:'segoe ui light',arial;
+  left:0;
+  right:0;
+  margin:auto;
+  line-height:140px;
+  vertical-align:middle;
+  font-size:40px;
+  color: white;
+   -webkit-transition:all 0.3s ease-in-out;
+  -ms-transition:all 0.3s ease-in-out;
+  -moz-transition:all 0.3s ease-in-out;
+  -o-transition:all 0.3s ease-in-out;
+  -apple-transition:all 0.3s ease-in-out;
+  transition:all 0.3s ease-in-out;
+}

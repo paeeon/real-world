@@ -1,23 +1,43 @@
 <div class="container">
   <div class="row">
+    <div ng-show="!gameFull">
+      <div class="short-id-box text-center">
+        <span class="description">Invite friends to join this game with this code…</span>
+        <br>
+        <span id="short-id">{{ shortId }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="spacer" ng-show="!gameFull"></div>
+  <div class="row">
     <div class="col-xs-12" ng-show="!gameFull">
-      <h6>Room left in the game</h6>
-      <h3>{{ roomLeftInGame }}</h3>
+      <div class="statBubbleContainer">
+        <h3>Room left in this game</h3>
+        <div class="statBubble">
+          <div class="statNum">
+            {{ roomLeftInGame }}
+          </div>
+        </div>
+      </div>
 
-      <h4>Enter your information in below to receive your Role and join the game!</h4>
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" name="playerName" class="form-control" ng-model="player.name">
+      <div class="register">
+        <h4 class="instruction">Enter your information in below to receive your Role and join the game!</h4>
+        <div class="small-spacer"></div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" name="playerName" class="form-control" ng-model="player.name">
+        </div>
+        <div class="form-group">
+          <label>Your Phone Number</label>
+          <input type="text" name="phoneNumber" class="form-control" ng-model="player.phoneNumber" ui-us-phone-number>
+        </div>
+        <button class="btn btn-block btn-aqua" ng-click="joinGame()">Join the game!</button>
       </div>
-      <div class="form-group">
-        <label>Your Phone Number</label>
-        <input type="text" name="phoneNumber" class="form-control" ng-model="player.phoneNumber" ui-us-phone-number>
-      </div>
-      <button class="btn btn-block btn-primary" ng-click="joinGame()">Join the game!</button>
     </div>
     <div class="col-xs-12" ng-show="gameFull">
       <p class="text-center">There's no space left in this game for you! :(</p>
-      <button class="btn btn-default btn-block" ui-sref="instructionList">Start a new game!</button>
+      <button class="btn btn-aqua btn-block" ui-sref="instructionList">Start a new game!</button>
     </div>
   </div>
+  <div class="spacer" ng-show="!gameFull"></div>
 </div>

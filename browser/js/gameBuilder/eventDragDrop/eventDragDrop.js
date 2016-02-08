@@ -1,11 +1,12 @@
 app.config(function($stateProvider) {
   $stateProvider.state('eventDragDrop', {
-    url: '/game-builder/game-details',
+    url: '/game-builder/:gameId/game-details',
     templateUrl: 'js/gameBuilder/eventDragDrop/eventDragDrop.html',
     controller: 'eventDragDropCtrl',
     resolve: {
-      events: function(gameBuildFactory) {
-        return gameBuildFactory.getGameEvents('56b81707c30db7263e5c1863');
+      events: function(gameBuildFactory, $stateParams) {
+        var gameId = $stateParams.gameId;
+        return gameBuildFactory.getGameEvents(gameId);
       }
     }
   });

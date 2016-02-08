@@ -19,6 +19,20 @@ body {
   }
 }
 
+.short-id-box {
+  padding: 10px;
+  background-color: $bright-green;
+  span {
+    color: $dark-blue;
+    &.description {
+      font-size: 12px;
+    }
+    &#short-id {
+      font-size: 36px;
+    }
+  }
+}
+
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none !important;
 }
@@ -28,6 +42,17 @@ body {
   margin: 0 auto;
   &.inGame {
     padding-top: 45px;
+  }
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  margin-top: 4px;
+  background: $aqua-blue;
+  margin-bottom: 20px;
+  &.on-light {
+    background: $dark-blue;
   }
 }
 
@@ -55,11 +80,65 @@ p, span {
   color: $aqua-blue;
 }
 
+// Button styles
+
+.btn-aqua {
+  color: white;
+  font-weight: 700;
+  background-color: #75B9BE;
+  border-color: #75B9BE;
+}
+
+.btn-aqua:hover,
+.btn-aqua:focus,
+.btn-aqua:active,
+.btn-aqua.active,
+.open .dropdown-toggle.btn-aqua {
+  color: white;
+  font-weight: 700;
+  background-color: #5BA6AB;
+  border-color: #75B9BE;
+}
+
+.btn-aqua:active,
+.btn-aqua.active,
+.open .dropdown-toggle.btn-aqua {
+  border: 1px solid #5BA6AB;
+  background-image: none;
+}
+
+.btn-aqua.disabled,
+.btn-aqua[disabled],
+fieldset[disabled] .btn-aqua,
+.btn-aqua.disabled:hover,
+.btn-aqua[disabled]:hover,
+fieldset[disabled] .btn-aqua:hover,
+.btn-aqua.disabled:focus,
+.btn-aqua[disabled]:focus,
+fieldset[disabled] .btn-aqua:focus,
+.btn-aqua.disabled:active,
+.btn-aqua[disabled]:active,
+fieldset[disabled] .btn-aqua:active,
+.btn-aqua.disabled.active,
+.btn-aqua[disabled].active,
+fieldset[disabled] .btn-aqua.active {
+  background-color: #75B9BE;
+  border-color: #75B9BE;
+}
+
+.btn-aqua .badge {
+  color: #75B9BE;
+  background-color: white;
+  font-weight: 700;
+}
+
 // @import 'lumx/_lumx';
 @import 'directives/main';
 @import 'home/main';
 @import 'about/main';
 @import 'tutorial/main';
 @import 'login/main';
+@import 'instruction-list/main';
 @import 'character-info/main';
 @import 'dragDrop/main';
+@import 'register-char/main';

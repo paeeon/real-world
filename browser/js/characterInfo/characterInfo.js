@@ -9,13 +9,17 @@ app.config(function($stateProvider) {
       },
       characters: function($stateParams, characterFactory) {
         return characterFactory.allCharacters($stateParams.gameId);
+      },
+      shortId: function($stateParams, GameFactory) {
+        return GameFactory.getShortId($stateParams.gameId);
       }
     }
   });
 });
 
-app.controller('CharacterInfoController', function($scope, $state, character, characters, characterFactory, $stateParams, $firebaseArray, GameFactory) {
+app.controller('CharacterInfoController', function($scope, $state, character, characters, characterFactory, $stateParams, $firebaseArray, GameFactory, shortId) {
 
+  $scope.shortId = shortId;
   $scope.character = character;
   $scope.counter = 0;
 

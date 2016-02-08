@@ -43,45 +43,39 @@ app.controller('CharacterInfoController', function($scope, $state, character, ch
       $scope.numPlayersJoined = numPlayers;
     });
 
-  $scope.fastSetup = function() {
-    allCharRef.once('value', function(dataSnapshot) {
-      dataSnapshot.forEach(function(character) {
-        character.ref().update({
-          playerReady: true
-        });
-        console.log(character.val());
-      });
-    });
-
-    return GameFactory.triggerGameStart()
-        .then(function() {
-          $state.go('dashboard', {
-            gameId: $stateParams.gameId,
-            characterId: $stateParams.characterId
-          });
-        });
-  };
-
   allCharRef.on('child_changed', function(childSnapshot) {
     if (childSnapshot.val().playerReady) {
       $scope.numPlayersJoined++;
     }
   });
 
+  $scope.fastSetup = function() {
+    allCharRef.once('value', function(dataSnapshot) {
+      dataSnapshot.forEach(function(character) {
+        character.ref().update({
+          playerReady: true
+        });
+      });
+    });
+  };
+
+  var goToDashboard = function() {
+    console.log("Getting here!");
+    return $state.go('dashboard', {
+      gameId: $stateParams.gameId,
+      characterId: $stateParams.characterId
+    }).then(null, function(error) {
+      console.log(error);
+    });
+  };
+
   $scope.$watch('numPlayersJoined', function(newValue, oldValue) {
     if (newValue === totalNumOfPlayerSlots) {
-      console.log("stateParams.gameId…");
-      console.log($stateParams.gameId);
-      GameFactory.triggerGameStart($stateParams.gameId)
-        .then(function() {
-          $state.go('dashboard', {
-            gameId: $stateParams.gameId,
-            characterId: $stateParams.characterId
-          });
-        });
+      return GameFactory.triggerGameStart($stateParams.gameId)
+        .then(function(somethingMaybe) {
+          return goToDashboard();
+        }).then(null, console.error);
     }
   });
-
-
 
 });

@@ -1,5 +1,7 @@
 app.factory('GameFactory', function($http, $firebaseObject) {
   var extractData = function(response) {
+    console.log("Getting to the extractData function! Here's the response from the server…");
+    console.log(response);
     return response.data;
   };
 

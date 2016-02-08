@@ -1,6 +1,6 @@
 app.config(function ($stateProvider) {
   $stateProvider.state('buildGame', {
-    url: '/game-builder/game',
+    url: '/game-builder/new',
     templateUrl: 'js/gameBuilder/gameInfo/gameInfo.html',
     controller: 'buildGameCtrl'
   });

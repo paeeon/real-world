@@ -1,0 +1,45 @@
+@import '../variables';
+$stroke-width: 2;
+$fg: #FFA000;
+$fgU: #FFECB3;
+$oU: 0.5;
+$fgC: #FFECB3;
+$oC: 0;
+$fgI: #FFA000;
+svg {
+  pointer-events: none;
+  overflow: visible;
+  .under {
+    opacity: $oU;
+    path {
+      stroke: $fgU;
+    }
+  }
+  path {
+    stroke: $fg;
+    stroke-width: $stroke-width;
+    fill: rgba($fgC, $oC);
+  }
+  circle {
+    fill: $fgI;
+    &.click {
+      cursor: pointer;
+      fill: none;
+      pointer-events: all;
+    }
+  }
+}
+
+.view {
+  line-height: 0;
+  padding: 20px;
+}
+
+.page {
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Roboto', sans-serif;
+}

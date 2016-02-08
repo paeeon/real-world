@@ -1,0 +1,20 @@
+@import '../variables';
+
+.character-well {
+  h4 {
+    color: $dark-blue;
+  }
+  label {
+    color: $medium-grey;
+  }
+  span {
+    color: $medium-grey;
+  }
+}
+
+#character-form {
+  button.add-character {
+    background-color: $bright-green;
+    border-color: $bright-green;
+  }
+}

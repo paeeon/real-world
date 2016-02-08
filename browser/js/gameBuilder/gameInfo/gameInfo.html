@@ -1,20 +1,36 @@
-<form id="game-form" name="gameForm" ng-submit="submitGame()">
+<div class="container">
+  <div class="row">
+    <div class="col-lg-offset-3 col-lg-6">
+      <h2>Creating a new game</h2>
+      <h4 class="subheader"><span class="focus">Step 1</span> General Game Info</h4>
+      <hr>
+      <div class="spacer"></div>
 
-    <!-- <alert type="danger" ng-show="error">
-        {{ error }}
-    </alert> -->
-    <h2>GAME ENVIRONMENT</h2>
-    <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" ng-model="game.title" class="form-control" id="title" placeholder="Enter title">
+      <p>What's your game about? Here are some example ideas to get you thinking…</p>
+      <dl>
+        <dt>Elevator Escape</dt>
+        <dd>Characters get stuck insisde an elevator. They have to combine their different skills effectively to escape safely. </dd>
+        <dt>Executive Decision</dt>
+        <dd>One character is a president and the other characters are appointed positions on the Cabinet. They all have their own agendas, but the president can only back so many causes. </dd>
+      </dl>
+
+      <div class="spacer"></div>
+
+      <form id="game-form" name="gameForm" ng-submit="submitGame()">
+        <div class="form-group">
+          <label for="title" class="pull-left">Title</label>
+          <input type="text" ng-model="game.title" class="form-control" id="title">
+        </div>
+        <div class="form-group">
+          <label for="game-setting" class="pull-left">Setting</label><span class="pull-right">Where is this game situated?</span>
+          <input type="text" ng-model="game.setting" class="form-control" id="game-setting">
+        </div>
+        <div class="form-group">
+          <label for="game-overview" class="pull-left">Overview</label><span class="pull-right">A short description of what this game is about.</span>
+          <textarea type="text" ng-model="game.overview" class="form-control" id="game-overview" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-aqua pull-right">Next step</button>
+      </form>
     </div>
-    <div class="form-group">
-        <label for="game-setting">Setting</label>
-        <input type="text" ng-model="game.setting" class="form-control" id="game-setting" placeholder="Setting">
-    </div>
-    <div class="form-group">
-        <label for="game-overview">Overview</label>
-        <textarea type="text" ng-model="game.overview" class="form-control" id="game-overview" placeholder="Overview"></textarea>
-    </div>
-    <button type="submit" class="btn btn-default">Next step</button>
-</form>
+  </div>
+</div>

@@ -12,19 +12,27 @@ app.config(function ($stateProvider) {
   });
 });
 
-app.controller('buildEventCtrl', function($scope, $stateParams, characters, gameBuildFactory) {
+app.controller('buildEventCtrl', function($scope, $stateParams, characters, $q, gameBuildFactory) {
+  $scope.events = [{targets:[], decision:{choices:[]}}];
+
+  var gameId = $stateParams.gameId;
+
   $scope.characters = characters;
   $scope.cloneLists = [];
+
+  $scope.addEffect = function(){
+    $scope.events.push({targets:[], decision:{choices:[]}});
+  }
+
+  $scope.removeEffect = function(index){
+    if($scope.events.length > 1) $scope.events.splice(index,1);
+  }
+ 
   $scope.listCharacters = function(index){
     $scope.cloneLists.push($scope.characters.slice(0))
     return $scope.cloneLists[index]
   }
-  $scope.addEffect = function(){
-    $scope.events.push({targets:[]});
-  }
-  $scope.removeEffect = function(index){
-    if($scope.events.length > 1) $scope.events.splice(index,1);
-  }
+ 
   $scope.addCharacter = function(character, targets, targetGroup){
     console.log(character)
     character = angular.fromJson(character);
@@ -34,12 +42,27 @@ app.controller('buildEventCtrl', function($scope, $stateParams, characters, game
     targets.push(character)
 
   }
+
   $scope.removeChar = function(index, targets, sourceChars){
     sourceChars.push(targets[index])
     targets.splice(index,1);
   }
-  $scope.events = [{targets:[]}];
-  var gameId = $stateParams.gameId;
+
+  $scope.addChoice = function(currentEvent){
+    console.log(currentEvent)
+    currentEvent.decision.choices.push({choice:currentEvent.currentChoice})
+    currentEvent.currentChoice = '';
+  }
+
+  $scope.removeChoice = function(index, currentEvent){
+    currentEvent.decision.choices.splice(index,1)
+  }
+
+  $scope.isDecision = function(currentEvent){
+    if (currentEvent.type === "Decision") return true;
+    else return false;
+  }
+
   $scope.submitEvents = function() {
     // create events
     var eventPromises = $scope.events.map(function(event) {

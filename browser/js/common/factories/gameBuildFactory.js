@@ -34,6 +34,13 @@ app.factory('gameBuildFactory', function($http) {
       return $http.get('/api/gameBuilder/' + gameId + '/events')
       .then(function(res){ return res.data});
     },
+    updateEvent: function(eventToUpdate) {
+      console.log(eventToUpdate);
+      return $http.put('/api/gameBuilder/'+ eventToUpdate._id, eventToUpdate)
+      .then(function(res) {
+        return res.data;
+      });
+    },
     nestedList: function(theEvent) {
         var oneEvent = theEvent;
         if (oneEvent.type === 'choice') {

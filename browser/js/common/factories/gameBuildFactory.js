@@ -75,6 +75,9 @@ app.factory('gameBuildFactory', function($http) {
         // if it doesnt update event
         if (!eventNest.columns[0][0]) {
           console.log('updating ', eventNest._id);
+          // if it doesnt have any events to trigger
+          // and we havent assigned triggeredBy to 'event'
+          // the event will be triggered by 'time'
           if (!eventNest.triggeredBy) {
             eventNest.triggeredBy = 'time';
           }
@@ -83,10 +86,12 @@ app.factory('gameBuildFactory', function($http) {
         else {
           // if the event is a text event
           // save the inner event to the willTrigger of that event
+          // and triggeredBy of inner event to 'event'
           if (eventNest.type === 'text') {
             console.log('text event with willTrigger');
-            eventNest.willTrigger = eventNest.columns[0][0]._id;
-            eventNest.columns[0][0].triggeredBy = 'event';
+            var innerEvent = eventNest.columns[0][0];
+            eventNest.willTrigger = innerEvent._id;
+            innerEvent.triggeredBy = 'event';
             gameBuildFactory.saveNestedEvents(eventNest.columns[0]);
           }
           // if the event is a choice event
@@ -95,6 +100,11 @@ app.factory('gameBuildFactory', function($http) {
             // loop through the columns
             // (for choice events columns are the choices)
             eventNest.columns[0].forEach(function(choice, i) {
+              // if its not a choice (its an event) and needs resolution
+              // set the outer events willResolve to the inner event id
+              if (!choice.choice && choice.needsResolution) {
+                eventNest.decision.willResolve = choice._id;
+              }
               // if any of the choices triggers an event
               // console.log(choice.columns[0][0])
               if (choice.columns[0][0]) {

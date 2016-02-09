@@ -12,7 +12,9 @@ app.config(function($stateProvider) {
   });
 });
 
-app.controller('eventDragDropCtrl', function($scope, $state, gameBuildFactory, events) {
+app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameBuildFactory, events) {
+  var gameId = $stateParams.gameId;
+
   $scope.eventList = events.map(function(theEvent) {
     return gameBuildFactory.nestedList(theEvent);
   });
@@ -33,6 +35,10 @@ app.controller('eventDragDropCtrl', function($scope, $state, gameBuildFactory, e
     dropzones: {
       A: []
     }
+  };
+
+  $scope.submitNest = function(events) {
+    return gameBuildFactory.saveNestedEvents(events);
   };
 
   $scope.$watch('models.dropzones', function(model) {

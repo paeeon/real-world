@@ -1,4 +1,12 @@
 <div class="container">
+  <!-- <div class="row">
+    <h1>HERE IS THE LIST</h1>
+    <ul dnd-list="list">
+      <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+        {{item.label}}
+      </li>
+    </ul>
+  </div> -->
   <div class="row">
     <div class="col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
       <h2>Creating a new game</h2>
@@ -8,30 +16,41 @@
     <div class="col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8">
 
       <form id="event-form" name="eventForm" ng-submit="submitEvents()">
-        <div>
-          <h2>EVENT DETAILS</h2>
-          <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" ng-model="name.title" class="form-control" id="title" placeholder="Enter title">
-          </div>
+        <div class="clearfix">
+          <button type="button" ng-click="addEffect()" class="btn btn-default pull-left add-character"><i class="fa fa-plus-circle"></i>Add a new event</button>
+        </div>
+        <div class="small-spacer"></div>
+        <div class="well">
           <div ng-repeat="event in events track by $index">
-            <h3>Effect
-        <button type="button" ng-click="addEffect()" name="addEffect">+</button>
-      </h3>
+            <div class="clearfix">
+              <h4 class="pull-left">Event #{{ $index + 1 }}</h4>
+              <button type="button" ng-click="removeEffect($index)" class="btn btn-sm btn-grey pull-right" ng-show="$index !== 0"><i class="fa fa-user-times"></i>Delete this event</button>
+            </div>
+            <div class="small-spacer"></div>
             <div class="form-group">
-              <label for="type">Text or Decision?</label>
+              <label for="title" class="pull-left">Event Title</label>
+              <input type="text" ng-model="name.title" class="form-control" id="title" placeholder="Enter title">
+            </div>
+            <div class="form-group">
+              <label for="targets">Who wil be affected by this event?</label>
+              <!-- <ul dnd-list="list">
+                <li ng-repeat="item in list" dnd-draggable="item" dnd-moved="list.splice($index, 1)" dnd-effect-allowed="move" dnd-selected="models.selected = item" ng-class="{'selected': models.selected === item}">
+                  {{item.label}}
+                </li>
+              </ul> -->
+              <select type="text" ng-options="character.name for character in listCharacters($index)" ng-model="event.charToAdd" class="form-control" id="targets" placeholder="Characters involved">
+              </select>
+              <h3><button type="button" ng-click="addCharacter(event.charToAdd, event.targets, cloneLists[$index])">+</button></h3>
+            </div>
+            <div><span ng-repeat="target in event.targets track by $index">{{target.name}}<button type="button" ng-click="removeChar($index, event.targets, cloneLists[$parent.$index])">-</button>  </span></div>
+
+            <div class="form-group">
+              <label for="type" class="pull-left">What kind of event is this?</label><span class="pull-right"></span>
               <select type="text" ng-model="event.type" class="form-control" id="type">
                 <option>Text</option>
                 <option>Decision</option>
               </select>
             </div>
-            <div class="form-group">
-              <label for="targets">Choose Characters</label>
-              <select type="text" ng-options="character.name for character in listCharacters($index) " ng-model="event.charToAdd" class="form-control" id="targets" placeholder="Characters involved">
-              </select>
-              <h3><button type="button" ng-click="addCharacter(event.charToAdd, event.targets, cloneLists[$index])">+</button></h3>
-            </div>
-            <div><span ng-repeat="target in event.targets track by $index">{{target.name}}<button type="button" ng-click="removeChar($index, event.targets, cloneLists[$parent.$index])">-</button>  </span></div>
             <div class="form-group">
               <label for="event-eventThatOccurred">Message to Characters</label>
               <textarea type="t" ng-model="event.eventThatOccurred" class="form-control" id="event-eventThatOccurred" placeholder="Message"></textarea>
@@ -49,13 +68,10 @@
                   <h6>+</h6></button>
                 <div><span ng-repeat="choice in event.decision.choices track by $index">{{choice.choice}}<button type="button" ng-click="removeChoice($index, event)">-</button></span></div>
               </div>
-
             </div>
-            <button type="button" ng-click="removeEffect($index)">-</button>
           </div>
-        </div>
-        <button type="submit" class="btn btn-default">Next step</button>
+          <button type="submit" class="btn btn-default">Next step</button>
       </form>
+      </div>
     </div>
   </div>
-</div>

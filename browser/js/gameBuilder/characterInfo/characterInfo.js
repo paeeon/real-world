@@ -9,8 +9,8 @@ app.config(function ($stateProvider) {
 app.controller('buildCharacter', function($scope, $q, $state, $stateParams, gameBuildFactory) {
   var gameId = $stateParams.gameId;
   $scope.characters = [{}];
-  console.log(gameId)
-  $scope.thingthatwillfail = function(){console.log($scope.characters)};
+
+  //add new character to game
   $scope.addNew = function(){
     $scope.characters.push({});
   }

@@ -5,11 +5,13 @@
       <div class="spacer"></div>
       <div class="list-group">
         <a ng-repeat="instruction in allInstructions" class="instruction-list-item list-group-item clearfix">
-          <h4 class="list-group-item-heading">{{ instruction.title }}</h4>
+          <div class="clearfix">
+            <h4 class="list-group-item-heading pull-left">{{ instruction.title }}</h4>
+            <button class="btn btn-aqua pull-right" ng-click="buildGame(instruction._id)">Start game</button>
+          </div>
           <hr class="on-light">
           <p class="list-group-item-text">{{ instruction.overview }}</p>
           <div class="small-spacer"></div>
-          <button class="btn btn-aqua pull-right" ng-click="buildGame(instruction._id)">Start game</button>
         </a>
       </div>
     </div>

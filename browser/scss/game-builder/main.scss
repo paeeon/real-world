@@ -1,13 +1,20 @@
 @import '../variables';
-
 .well {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: $dark-blue;
   }
   label {
-    color: $medium-grey;
+    color: $dark-grey;
   }
   span {
+    color: $medium-grey;
+  }
+  p {
     color: $medium-grey;
   }
 }
@@ -19,23 +26,62 @@
   }
 }
 
+.event-well {
+  ul#character-list {
+    li {
+      color: white;
+      background-color: $medium-grey;
+      border-radius: 5px;
+      border: 0px;
+      margin-bottom: 4px;
+      &:hover {
+        cursor: move;
+      }
+    }
+  }
+  .dropzone .selected .item {
+    background-color: $aqua-blue;
+    border-radius: 5px;
+    border: 0px;
+    color: white;
+  }
+  .dropzone-outer:first-child {
+    border: 0;
+    border-right: 1px solid $medium-grey;
+  }
+  .dropzone .item {
+    margin-bottom: 3px;
+  }
+  #event-choices {
+    display: inline;
+    width: 300px;
+  }
+}
+
+.dropzone .selected .item {}
+
+
 /**
  * For the correct positioning of the placeholder element, the dnd-list and
  * it's children must have position: relative
  */
+
 .simpleDemo ul[dnd-list],
 .simpleDemo ul[dnd-list] > li {
   position: relative;
 }
 
+
 /**
  * The dnd-list should always have a min-height,
  * otherwise you can't drop to it once it's empty
  */
+
 .simpleDemo ul[dnd-list] {
-    min-height: 42px;
-    padding-left: 0px;
+  min-height: 42px;
+  padding-left: 0px;
 }
+
 
 /**
  * The dndDraggingSource class will be applied to
@@ -43,20 +89,24 @@
  * sense to hide it to give the user the feeling
  * that he's actually moving it.
  */
+
 .simpleDemo ul[dnd-list] .dndDraggingSource {
-    display: none;
+  display: none;
 }
+
 
 /**
  * An element with .dndPlaceholder class will be
  * added to the dnd-list while the user is dragging
  * over it.
  */
+
 .simpleDemo ul[dnd-list] .dndPlaceholder {
-    display: block;
-    background-color: #ddd;
-    min-height: 42px;
+  display: block;
+  background-color: #ddd;
+  min-height: 42px;
 }
+
 
 /**
  * The dnd-lists's child elements currently MUST have
@@ -65,20 +115,23 @@
  * half of the element we are dragging over. In other
  * browsers we can use event.offsetY for this.
  */
+
 .simpleDemo ul[dnd-list] li {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-top-right-radius: 4px;
-    border-top-left-radius: 4px;
-    display: block;
-    padding: 10px 15px;
-    margin-bottom: -1px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  display: block;
+  padding: 10px 15px;
+  margin-bottom: -1px;
 }
+
 
 /**
  * Show selected elements in green
  */
+
 .simpleDemo ul[dnd-list] li.selected {
-    background-color: #dff0d8;
-    color: #3c763d;
+  background-color: #dff0d8;
+  color: #3c763d;
 }

@@ -5,29 +5,24 @@
      assigned to it. If an element was dragged away, you have to remove
      it from the original list yourself using the dnd-moved attribute -->
 <script type="text/ng-template" id="list.html">
-    <ul dnd-list="list">
-        <li ng-repeat="item in list"
-            dnd-draggable="item"
-            dnd-effect-allowed="move"
-            dnd-moved="list.splice($index, 1)"
-            dnd-selected="models.selected = item"
-            ng-class="{selected: models.selected === item}"
-            ng-include="'container.html'">
-        </li>
-    </ul>
+  <ul dnd-list="list">
+    <li ng-repeat="item in list" dnd-draggable="item" dnd-effect-allowed="move" dnd-moved="list.splice($index, 1)" dnd-selected="models.selected = item" ng-class="{selected: models.selected === item}" ng-include="'container.html'">
+    </li>
+  </ul>
 </script>
 
 <!-- This template is responsible for rendering a container element. It uses
      the above list template to render each container column -->
 <script type="text/ng-template" id="container.html">
-    <div class="container-element box box-blue">
-        <h3>{{item.title}}
-          <input type="number" name="time" ng-model="item.timed.timeout">
-          Minutes after game start
-        </h3>
-        <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
-        <div class="clearfix"></div>
+  <div class="container-element box box-blue">
+    <span class="item-title pull-left">{{item.title}}</span>
+    <div class="minutes-after-game-start pull-right" ng-hide="item.choice">
+      <input type="number" name="time" ng-model="item.timed.timeout">
+      <span> minutes after</span>
     </div>
+    <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+    <div class="clearfix"></div>
+  </div>
 </script>
 
 <!-- Sidebar -->
@@ -37,10 +32,12 @@
     <ul>
       <!-- The toolbox only allows to copy objects, not move it. After a new
       element was created, dnd-copied is invoked and we generate the next id -->
-      <li ng-repeat="item in eventList"
-        dnd-draggable="item"
-        dnd-moved="eventList.splice($index, 1)">
-        <button type="button" class="btn btn-default btn-lg">{{item.title}}</button>
+      <li ng-repeat="item in eventList" dnd-draggable="item" dnd-moved="eventList.splice($index, 1)">
+        <div class="btn-drag-drop-event">
+          <p class="event-title">{{item.title}}</p>
+          <p class="event-description">{{ item.eventThatOccurred }}</p>
+          <p class="indicator" ng-show="item.needsResolution"><i class="margin-left fa fa-exclamation margin-right"></i> Has a placeholder. Must be dropped inside of a Choice event in order for the PLACEHOLDER to be filled in with a Choice.</p>
+        </div>
       </li>
     </ul>
   </div>
@@ -48,38 +45,35 @@
 
 <!-- Main area with dropzones and source code -->
 <div class="col-md-6">
-    <div class="row">
-        <div ng-repeat="(zone, list) in models.dropzones">
-            <div class="dropzone box box-yellow">
-                <!-- The dropzone also uses the list template -->
-                <h3>Game Timeline</h3>
-                <div ng-include="'list.html'"></div>
-            </div>
-        </div>
-    </div>
-    <div view-source="nested"></div>
-    <h2>Generated Model</h2>
-    <pre>{{modelAsJson}}</pre>
-</div>
-
-<!-- selected event description -->
-<div class="col-md-3">
   <div class="row">
-    <div ng-if="models.selected" class="box box-grey box-padding">
-      <h3 >{{ models.selected.title }}</h3>
-      <hr>
-      <h5 ng-show="models.selected.type">Type of event
-        <p class="list-group-item-text">{{ models.selected.type }}</p>
-      </h5>
-      <h5 ng-show="models.selected.eventThatOccurred">Description
-        <p class="list-group-item-text">{{ models.selected.eventThatOccurred }}</p>
-      </h5>
-      <h5 ng-show="models.selected.decision.question">Question
-        <p class="list-group-item-text">{{ models.selected.decision.question }}</p>
-      </h5>
-      <h5 ng-show="models.selected.decision.question">Choices
-        <p ng-repeat="choice in models.selected.decision.choices" class="list-group-item-text">{{ choice.choice }}</p>
-      </h5>
+    <div ng-repeat="(zone, list) in models.dropzones">
+      <div class="dropzone box box-yellow">
+        <!-- The dropzone also uses the list template -->
+        <h3>Game Timeline</h3>
+        <div ng-include="'list.html'"></div>
+      </div>
     </div>
+  </div>
+  <div view-source="nested"></div>
+  <!-- <h2>Generated Model</h2>
+  <pre>{{modelAsJson}}</pre> -->
+</div
+
+<div class="col-md-3">
+  <button id="game-submit" class="btn btn-aqua btn-lg" ng-click="submitNest(models.dropzones.A)">Save game</button>
+  <div ng-if="models.selected" class="box box-grey box-padding">
+    <h3>{{ models.selected.title }}</h3>
+    <hr>
+    <h5 ng-show="models.selected.type">Type of event</h5>
+    <p class="list-group-item-text">{{ models.selected.type }}</p>
+
+    <h5 ng-show="models.selected.eventThatOccurred">Description</h5>
+    <p class="list-group-item-text">{{ models.selected.eventThatOccurred }}</p>
+
+    <h5 ng-show="models.selected.decision.question">Question</h5>
+    <p class="list-group-item-text">{{ models.selected.decision.question }}</p>
+
+    <h5 ng-show="models.selected.decision.question">Choices</h5>
+    <p ng-repeat="choice in models.selected.decision.choices" class="list-group-item-text">{{ choice.choice }}</p>
   </div>
 </div>

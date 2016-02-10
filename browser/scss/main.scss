@@ -82,13 +82,11 @@ p, span {
   color: $aqua-blue;
 }
 
-// Button styles
-
-.btn {
-  i {
-    margin-right: 5px;
-  }
+ul {
+  color: $medium-grey;
 }
+
+// Button styles
 
 .btn-default {
   background-color: darken($dark-blue, 10%);
@@ -184,10 +182,32 @@ fieldset[disabled] .btn-aqua.active {
   margin-right: 5px;
 }
 
+.margin-left {
+  margin-left: 5px;
+}
+
+.margin-top {
+  margin-top: 5px;
+}
+
 // Form styles
 
 .form-control:focus {
   border-color: $dark-blue;
+}
+
+// Popover styles
+.fa-info-circle {
+  cursor: pointer;
+}
+
+.popover-title {
+  line-height: 1.5em;
+}
+
+.popover-content {
+  font-family: $font-stack;
+  color: $medium-grey;
 }
 
 // @import 'lumx/_lumx';

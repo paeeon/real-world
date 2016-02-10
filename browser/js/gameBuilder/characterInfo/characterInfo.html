@@ -9,13 +9,13 @@
 
       <form id="character-form" name="characterForm">
         <div class="clearfix">
-          <button type="button" ng-click="addNew()" class="btn btn-default pull-left add-character"><i class="fa fa-user-plus"></i>Add a new character</button>
+          <button type="button" ng-click="addNew()" class="btn btn-default pull-left add-character"><i class="fa fa-user-plus margin-right"></i>Add a new character</button>
         </div>
         <div class="small-spacer"></div>
         <div class="well character-well" ng-repeat="character in characters track by $index">
           <div class="clearfix">
             <h4 class="pull-left">Character #{{ $index + 1 }}</h4>
-            <button type="button" ng-click="remove($index)" class="btn btn-sm btn-grey pull-right" ng-show="$index !== 0"><i class="fa fa-user-times"></i>Delete this character</button>
+            <button type="button" ng-click="remove($index)" class="btn btn-sm btn-grey pull-right" ng-show="$index !== 0"><i class="fa fa-user-times margin-right"></i>Delete this character</button>
           </div>
           <div class="small-spacer"></div>
           <div class="form-group">

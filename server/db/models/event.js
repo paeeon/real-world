@@ -29,6 +29,9 @@ var schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Event'
     },
+    willResolveName: {
+      type: String
+    },
     question: {
       type: String
     },

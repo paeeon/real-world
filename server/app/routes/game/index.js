@@ -47,7 +47,6 @@ router.get('/build/:instructionId', function(req, res, next) {
       var characterMap = {};
       var eventMap = {};
       game.characters.forEach(function(character) {
-        //console.log("character:", character);
         characterMap[character._id] = character;
       })
       var choiceEvents = {};
@@ -61,11 +60,11 @@ router.get('/build/:instructionId', function(req, res, next) {
           choiceEvents[event._id] = {
             targets: event.targets
           };
-          if (event.needsResolution) {
+        }
+        if (event.needsResolution) {
             var id = event._id.toString();
             resolve[id] = 'replace';
           }
-        }
       });
       game.votes = choiceEvents;
       game.characters = characterMap;
@@ -97,9 +96,9 @@ router.get('/build/:instructionId', function(req, res, next) {
 var resolveEvent = function(gameId, eventToResolve) {
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   gameRef.child('resolveTable').child(eventToResolve._id.toString())
-    .once('value', function(snapshot) {
-      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val());
-      textEvents(eventToResolve);
+    .once('value', function(snapshot) { //HERE IS WHERE I THINK THE PROBLEM IS NOW!!!!!!
+      eventToResolve.eventThatOccurred = eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val()); //
+      textEvents(gameId, eventToResolve);
     });
 };
 
@@ -108,7 +107,6 @@ var resolveEvent = function(gameId, eventToResolve) {
 function textEvents(gameId, textEvent) {
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   textEvent.targets.forEach(function(targetId) {
-    // console.log("THIS IS THE TARGET", targetId); //this is the problem with all of the events going twice. is it async? is it too many targets?
     targetId = targetId.toString();
     gameRef.child('characters').child(targetId).child("message").push({
       message: textEvent.eventThatOccurred
@@ -119,7 +117,6 @@ function textEvents(gameId, textEvent) {
 var eventHandler = {
   // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
   text: function(gameId, textEvent) {
-    // console.log("THIS IS THE TEXT EVENT", textEvent);
     if (textEvent.needsResolution) resolveEvent(gameId, textEvent); //investigate this further
     else textEvents(gameId, textEvent); //investigate this further
   },
@@ -142,17 +139,10 @@ var eventHandler = {
 var timesCalled = 0;
 // Function for starting timed events
 var startTimed = function(gameId) {
-
-  console.log("Has this game already started?");
-  console.log(gameStarted[gameId]);
   gameStarted[gameId] = true;
-
-  console.log("startTimed being called right now…");
 
   var timed = [];
   var game = games[gameId];
-  console.log("Here is the game…");
-  console.log(game);
   // Loop through the keys of each of the game's events
   Object.keys(game.events).forEach(function(eventKey) {
     // If a game event has a 'triggeredBy' attribute set to "time",
@@ -186,9 +176,7 @@ var startTimed = function(gameId) {
     //      (i.e., "The winners have been announced!"), or an empty string (if nothing exists on that
     //      object at the requested location).
     if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout) {
-      // console.log("TIMED EVENTS IS", timed); //log timed.length every time it is seen!!!!!!!!
       var currentEvent = timed.pop();
-      // console.log("CURRENT EVENT IS", currentEvent);
       eventHandler[currentEvent.type](gameId, currentEvent)
       var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
       gameRef.child("pastEvents").child("timed").push({
@@ -200,7 +188,6 @@ var startTimed = function(gameId) {
         }
       });
     }
-    console.log(timesCalled)
   }, 500)
 };
 

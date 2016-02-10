@@ -3,7 +3,8 @@ app.directive('infobar', function () {
     return {
         restrict: 'E',
         scope: {
-            game: '='
+            game: '=',
+            character: '='
         },
         templateUrl: 'js/common/directives/infobar/infobar.html',
         link: function (scope) {

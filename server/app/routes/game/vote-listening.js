@@ -11,22 +11,18 @@ gamesRef.on('child_added', function(dataSnapshot) {
     i++;
     var currentVote = childSnapshot.val();
     var parentRef = voteRef.child(childSnapshot.key());
-    console.log('votes logged', childSnapshot.numChildren()-1);
-    console.log('expected numer of votes', currentVote.targets.length);
     var votes = {};
 
     Event.findById(parentRef.key()).exec()
     .then(function(currentEvent) {
       if (childSnapshot.numChildren()-1 === currentEvent.targets.length) {
-        var parent;
-        parentRef.once('value', function(parentSnap){
-          parent = parentSnap.val();
-        });
-        // console.log(parent)
+        // var parent;
+        // parentRef.once('value', function(parentSnap){
+        //   parent = parentSnap.val();
+        // });
         childSnapshot.forEach(function(snapshot) {
-          var vote = snapshot.val();
-          if(vote.choice){
-
+          if (snapshot.val().choice){
+            var vote = snapshot.val();
             if (!votes[vote.choice]) {
               votes[vote.choice] = vote;
               votes[vote.choice].count = 1;
@@ -38,17 +34,24 @@ gamesRef.on('child_added', function(dataSnapshot) {
       }
       var winningVote = {max:0};
       Object.keys(votes).forEach(function(vote) {
-        if (!winningVote.winner) winningVote = vote;
+        if (!winningVote.winner) {
+          winningVote.winner = vote;
+        }
         else {
-          if (winningVote.max < votes[vote]) {
+          //i have no clue what the hell this is doing
+          if (winningVote.max < votes[vote].count) { //need to grab vote.count
             winningVote.winner = vote;
+            winningVote.max = votes[vote].count;
           }
         }
       });
       if (currentEvent.decision.willResolve) {
-        gameRef.child('resolveTable').child(currentEvent._id.toString()).set(winningVote);
+
+
+        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); //input winningVote.winner
+        //need to make this asynchronous (.THEN OFF OF IT) --might be okay
       }
-      return votes[winningVote].willTrigger;
+      return votes[winningVote.winner].willTrigger;
     }).then(function(toTrigger) {
       return Event.findById(toTrigger).exec();
     }).then(function(eventToTrigger) {

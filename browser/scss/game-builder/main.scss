@@ -19,6 +19,15 @@
   }
 }
 
+.creating-new-game {
+  p, dd {
+    color: $medium-grey;
+  }
+  dt {
+    color: white;
+  }
+}
+
 #character-form {
   button.add-character {
     background-color: $bright-green;

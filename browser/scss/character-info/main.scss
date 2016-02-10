@@ -8,7 +8,8 @@
   top: 20%;
   width: 400px;
   left: 50%;
-  margin-left: -200px; /* Half of the width */
+  margin-left: -200px;
+  /* Half of the width */
   z-index: 6;
   .waiting-message,
   .ready-characters {
@@ -17,6 +18,15 @@
   }
   #set-users-as-ready {
     z-index: 6;
+  }
+}
+
+.heres-your-character {
+  .your-character-will-be {
+    color: $aqua-blue;
+  }
+  p {
+    color: $medium-grey;
   }
 }
 

@@ -38,7 +38,10 @@ app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameB
   };
 
   $scope.submitNest = function(events) {
-    return gameBuildFactory.saveNestedEvents(events);
+    return gameBuildFactory.saveNestedEvents(events)
+      .then(function() {
+        $state.go('instructionList');
+      });
   };
 
   $scope.$watch('models.dropzones', function(model) {

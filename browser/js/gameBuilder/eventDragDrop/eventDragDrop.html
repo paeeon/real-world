@@ -58,12 +58,15 @@
         </div>
     </div>
     <div view-source="nested"></div>
-    <h2>Generated Model</h2>
-    <pre>{{modelAsJson}}</pre>
-</div>
+    <!-- <h2>Generated Model</h2>
+    <pre>{{modelAsJson}}</pre> -->
+</div
+
+
 
 <!-- selected event description -->
 <div class="col-md-3">
+  <button ng-click="submitNest(models.dropzones.A)">SUBMIT HERE</button>
   <div class="row">
     <div ng-if="models.selected" class="box box-grey box-padding">
       <h3 >{{ models.selected.title }}</h3>

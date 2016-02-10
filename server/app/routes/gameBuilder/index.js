@@ -26,7 +26,7 @@ router.post('/characterInfo', function(req, res, next) {
 // create events
 // POST /api/gameBuilder/eventInfo
 router.post('/eventInfo', function(req, res, next) {
-  Character.create(req.body)
+  Event.create(req.body)
   .then(function(createdEvent) {
     res.status(201).json(createdEvent);
   }).then(null, next);
@@ -47,6 +47,22 @@ router.put('/gameInfo/:gameId/:prop', function(req, res, next) {
   }).then(null, next);
 });
 
+// update events
+// PUT /api/gameBuilder/:eventId
+router.put('/:eventId', function(req, res, next) {
+  var eventId = req.params.eventId;
+  var updatedEvent = req.body;
+  Event.findById(eventId).exec()
+  .then(function(foundEvent) {
+    for (var k in updatedEvent) {
+      foundEvent[k] = updatedEvent[k];
+    }
+    // console.log(foundEvent)
+    return foundEvent.save();
+  }).then(function(response) {
+    res.status(200).json('Update successful');
+  }).then(null, next);
+});
 
 // get characters from game
 // GET /api/gameBuilder/:gameId/characters

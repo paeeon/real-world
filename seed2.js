@@ -113,6 +113,7 @@ var seedEvents = function() {
     {
       title: 'Welcome',
       triggeredBy: 'time',
+      needsResolution: 'false',
       type: 'text',
       eventThatOccurred: 'Welcome to the Color Game! Let\'s begin.',
       targets: characterIds,
@@ -123,9 +124,11 @@ var seedEvents = function() {
     }, {
       title: 'Lily Poll',
       triggeredBy: 'time',
+      needsResolution: 'false',
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their favorite color is.',
       decision: {
+        willResolveName: 'Lily Answer',
         question: 'What is your favorite color?',
         choices: [
           {
@@ -152,6 +155,7 @@ var seedEvents = function() {
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their favorite color is.',
       decision: {
+        willResolveName: 'Nicole Answer',
         question: 'What is your favorite color?',
         choices: [
           {
@@ -178,6 +182,7 @@ var seedEvents = function() {
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their favorite color is.',
       decision: {
+        willResolveName: 'Mike Answer',
         question: 'What is your favorite color?',
         choices: [
           {
@@ -201,6 +206,7 @@ var seedEvents = function() {
     }, {
       title: 'Lily Answer',
       triggeredBy: 'time',
+      needsResolution: 'true',
       type: 'text',
       eventThatOccurred: 'Lily\'s favorite color is: PLACEHOLDER !',
       targets: findCharacters(['Andrew']),
@@ -210,6 +216,7 @@ var seedEvents = function() {
       }
     }, {
       title: 'Nicole Answer',
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Nicole\'s favorite color is: PLACEHOLDER !',
@@ -220,6 +227,7 @@ var seedEvents = function() {
       }
     }, {
       title: 'Mike Answer',
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Mike\'s favorite color is: PLACEHOLDER !',
@@ -234,6 +242,7 @@ var seedEvents = function() {
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their least favorite color is.',
       decision: {
+        willResolveName: 'Lily Answer #2',
         question: 'What is your least favorite color?',
         choices: [
           {
@@ -260,6 +269,7 @@ var seedEvents = function() {
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their least favorite color is.',
       decision: {
+        willResolveName: 'Nicole Answer #2',
         question: 'What is your least favorite color?',
         choices: [
           {
@@ -286,6 +296,7 @@ var seedEvents = function() {
       type: 'choice',
       eventThatOccurred: 'Polling Event –the polling event will ask each person what their least favorite color is.',
       decision: {
+        willResolveName: 'Mike Answer #2',
         question: 'What is your least favorite color?',
         choices: [
           {
@@ -308,6 +319,7 @@ var seedEvents = function() {
       }
     }, {
       title: 'Mike Answer #2',
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Mike\'s least favorite color is: PLACEHOLDER !',
@@ -318,6 +330,7 @@ var seedEvents = function() {
       }
     }, {
       title: 'Nicole Answer #2',
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Nicole\'s least favorite color is: PLACEHOLDER !',
@@ -328,6 +341,7 @@ var seedEvents = function() {
       }
     }, {
       title: 'Lily Answer #2',
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Lily\'s least favorite color is: PLACEHOLDER !',
@@ -342,6 +356,7 @@ var seedEvents = function() {
       type: 'text',
       eventThatOccurred: 'What is Lily\'s favorite color?',
       decision: {
+        willResolveName: 'Andrew Guess to Everyone',
         question: 'What is Lily\'s favorite color?',
         choices: [
           {
@@ -364,6 +379,7 @@ var seedEvents = function() {
       }
     }, {
       title: "Andrew Guess to Everyone",
+      needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
       eventThatOccurred: 'Andrew thinks Lily\'s favorite color is: PLACEHOLDER',

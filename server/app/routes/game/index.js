@@ -53,6 +53,7 @@ router.get('/build/:instructionId', function(req, res, next) {
       var choiceEvents = {};
       var resolve = {};
       game.events.forEach(function(event) {
+        console.log("THIS EVENT IS AN EVENT LOOK LOOK LOOK",event);
         event.targets = event.targets.map(function(target) {
           return target.toString();
         });
@@ -61,11 +62,12 @@ router.get('/build/:instructionId', function(req, res, next) {
           choiceEvents[event._id] = {
             targets: event.targets
           };
-          if (event.needsResolution) {
+        }
+        if (event.needsResolution) {
+          console.log("I AM IN HERE I AM I AM");
             var id = event._id.toString();
             resolve[id] = 'replace';
           }
-        }
       });
       game.votes = choiceEvents;
       game.characters = characterMap;
@@ -95,17 +97,20 @@ router.get('/build/:instructionId', function(req, res, next) {
 });
 
 var resolveEvent = function(gameId, eventToResolve) {
+  console.log("EVENT TO RESOLVE IN RESOLVEEVENT", eventToResolve);
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   gameRef.child('resolveTable').child(eventToResolve._id.toString())
-    .once('value', function(snapshot) {
-      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val());
-      textEvents(eventToResolve);
+    .once('value', function(snapshot) { //HERE IS WHERE I THINK THE PROBLEM IS NOW!!!!!!
+      console.log("SNAPSHOT IS", snapshot.val());
+      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val()); //
+      textEvents(gameId, eventToResolve);
     });
 };
 
 // This is a helper function for resolveEvent. It pushes to a character's 'message's
 // when an event happens.
 function textEvents(gameId, textEvent) {
+  console.log("GAME ID IS", gameId);
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   textEvent.targets.forEach(function(targetId) {
     // console.log("THIS IS THE TARGET", targetId); //this is the problem with all of the events going twice. is it async? is it too many targets?
@@ -120,6 +125,7 @@ var eventHandler = {
   // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
   text: function(gameId, textEvent) {
     // console.log("THIS IS THE TEXT EVENT", textEvent);
+    console.log("TEXT EVENT NEEDS RESOLUTION", textEvent.needsResolution);
     if (textEvent.needsResolution) resolveEvent(gameId, textEvent); //investigate this further
     else textEvents(gameId, textEvent); //investigate this further
   },

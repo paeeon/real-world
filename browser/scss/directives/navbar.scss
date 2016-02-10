@@ -57,7 +57,7 @@ navbar {
     &:active {
       text-decoration: none;
       color: $dark-blue;
-      background: lighten($aqua-blue, 20%);
+      background: lighten($medium-grey, 20%);
     }
   }
 }

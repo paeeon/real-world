@@ -1,99 +1,163 @@
+@import '../variables';
 ul[dnd-list],
 ul[dnd-list] > li {
-	position: relative;
+  position: relative;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  padding: 5px;
+}
+
+#game-submit {
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+}
+
+.box {
+  span.item-title {
+    font-size: 24px;
+    color: $dark-blue;
+  }
+  .minutes-after-game-start {
+    input {
+      width: 50px;
+      // background-color: lighten($medium-grey, 25%);
+      padding: 5px;
+      border: 1px solid lighten($medium-grey, 25%);
+    }
+    span {
+      color: $medium-grey;
+    }
+  }
 }
 
 .dropzone {
   ul[dnd-list] {
     min-height: 42px;
     margin: 0px;
-    padding-left: 0px;
+  }
+  ul[dnd-list] > li {
+    ul[dnd-list] {
+      li {
+        .box span.item-title {
+          font-size: 16px;
+        }
+        margin-top: 10px;
+        margin-left: 10px;
+        border: 1px solid lighten($medium-grey, 20%);
+      }
+    }
   }
   li {
-      // background-color: #fff;
-      border: 1px solid #ddd;
-      display: block;
-      padding: 0px;
-      margin-left: 40px;
+    background-color: white;
+    border: 1px solid #ddd;
+    display: block;
+    margin-bottom: 4px;
+    color: $dark-blue;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: $dark-blue;
+    }
+  }
+  .selected .box > h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: white;
+    border-color: none;
+    background-color: none;
   }
   .dndDragging {
-      opacity: 0.7;
+    opacity: 0.7;
   }
   .dndDraggingSource {
-      display: none;
+    display: none;
   }
   .dndPlaceholder {
-      background-color: #ddd;
-      min-height: 42px;
-      display: block;
-      position: relative;
-  }
-  .selected {
-    .item {
-      color: #3c763d;
-      background-color: #dff0d8;
-    }
-    .box {
-        border-color: #d6e9c6;
-    }
-    .box > h3 {
-        color: #3c763d;
-        background-color: #dff0d8;
-        background-image: linear-gradient(to bottom,#dff0d8 0,#d0e9c6 100%);
-        border-color: #d6e9c6;
-    }
+    background-color: #ddd;
+    min-height: 42px;
+    display: block;
+    position: relative;
   }
   .item {
-      padding: 10px 15px;
+    padding: 10px 15px;
   }
   .container-element {
-      margin: 10px;
-      .column {
-          float: left;
-          width: 98%;
-      }
+    margin: 10px;
+    .column {
+      float: left;
+      width: 98%;
+    }
   }
 }
 
 .toolbox ul {
-    list-style: none;
-    padding-left: 0px;
-    cursor: move;
+  list-style: none;
+  padding-left: 0px;
+  cursor: move;
 }
 
-.toolbox button {
-    margin: 5px;
-    width: 100%;
-    opacity: 1.0;
+.toolbox .btn-drag-drop-event {
+  display: block;
+  background-color: darken($dark-blue, 5%);
+  padding: 10px;
+  color: lighten($medium-grey, 20%);
+  margin-bottom: 5px;
+  width: 100%;
+  opacity: 1.0;
+  p.event-title {
+    color: white;
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+  p.event-description {
+    font-size: 12px;
+  }
+  p.indicator {
+    margin-right: 5px;
+    margin-left: 5px;
+    color: $dark-blue;
+    background-color: $bright-green;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+  }
 }
 
 .toolbox .dndDragging {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .toolbox .dndDraggingSource {
-    opacity: 1.0;
+  opacity: 1.0;
 }
 
 .trashcan ul {
-    list-style: none;
-    padding-left: 0px;
+  list-style: none;
+  padding-left: 0px;
 }
 
 .trashcan img {
-    width: 100%;
-    -webkit-filter: grayscale(100%);
-    -moz-filter: grayscale(100%);
-    filter: grayscale(100%);
+  width: 100%;
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  filter: grayscale(100%);
 }
 
 .trashcan .dndDragover img {
-    width: 100%;
-    -webkit-filter: none;
-    -moz-filter: none;
-    filter: none;
+  width: 100%;
+  -webkit-filter: none;
+  -moz-filter: none;
+  filter: none;
 }
 
 .trashcan .dndPlaceholder {
-    display: none;
+  display: none;
 }

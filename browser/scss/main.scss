@@ -20,6 +20,7 @@ body {
 }
 
 .short-id-box {
+  z-index: 10;
   padding: 10px;
   background-color: $bright-green;
   span {
@@ -53,6 +54,7 @@ hr {
   margin-bottom: 20px;
   &.on-light {
     background: $dark-blue;
+    margin-bottom: 15px;
   }
 }
 
@@ -80,13 +82,63 @@ p, span {
   color: $aqua-blue;
 }
 
+ul {
+  color: $medium-grey;
+}
+
 // Button styles
+
+.btn-default {
+  background-color: darken($dark-blue, 10%);
+  border-color: darken($dark-blue, 10%);
+  color: white;
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {
+  color: white;
+  background-color: darken($dark-blue, 18%);
+  border-color: darken($dark-blue, 18%);
+}
+
+.btn-default:active,
+.btn-default.active,
+.open .dropdown-toggle.btn-default {
+  border: 1px solid darken($dark-blue, 18%);
+  background-image: none;
+}
+
+.btn-grey {
+  background-color: $medium-grey;
+  border-color: $medium-grey;
+  color: white;
+}
+
+.btn-grey:hover,
+.btn-grey:focus,
+.btn-grey:active,
+.btn-grey.active,
+.open .dropdown-toggle.btn-grey {
+  color: white;
+  background-color: darken($medium-grey, 18%);
+  border-color: darken($medium-grey, 18%);
+}
+
+.btn-grey:active,
+.btn-grey.active,
+.open .dropdown-toggle.btn-grey {
+  border: 1px solid darken($medium-grey, 18%);
+  background-image: none;
+}
 
 .btn-aqua {
   color: white;
-  font-weight: 700;
-  background-color: #75B9BE;
-  border-color: #75B9BE;
+  font-weight: 400;
+  background-color: $aqua-blue;
+  border-color: $aqua-blue;
 }
 
 .btn-aqua:hover,
@@ -95,15 +147,15 @@ p, span {
 .btn-aqua.active,
 .open .dropdown-toggle.btn-aqua {
   color: white;
-  font-weight: 700;
-  background-color: #5BA6AB;
-  border-color: #75B9BE;
+  font-weight: 400;
+  background-color: $aqua-blue;
+  border-color: $aqua-blue;
 }
 
 .btn-aqua:active,
 .btn-aqua.active,
 .open .dropdown-toggle.btn-aqua {
-  border: 1px solid #5BA6AB;
+  border: 1px solid $aqua-blue;
   background-image: none;
 }
 
@@ -122,14 +174,40 @@ fieldset[disabled] .btn-aqua:active,
 .btn-aqua.disabled.active,
 .btn-aqua[disabled].active,
 fieldset[disabled] .btn-aqua.active {
-  background-color: #75B9BE;
-  border-color: #75B9BE;
+  background-color: $aqua-blue;
+  border-color: $aqua-blue;
 }
 
-.btn-aqua .badge {
-  color: #75B9BE;
-  background-color: white;
-  font-weight: 700;
+.margin-right {
+  margin-right: 5px;
+}
+
+.margin-left {
+  margin-left: 5px;
+}
+
+.margin-top {
+  margin-top: 5px;
+}
+
+// Form styles
+
+.form-control:focus {
+  border-color: $dark-blue;
+}
+
+// Popover styles
+.fa-info-circle {
+  cursor: pointer;
+}
+
+.popover-title {
+  line-height: 1.5em;
+}
+
+.popover-content {
+  font-family: $font-stack;
+  color: $medium-grey;
 }
 
 // @import 'lumx/_lumx';
@@ -142,3 +220,4 @@ fieldset[disabled] .btn-aqua.active {
 @import 'character-info/main';
 @import 'dragDrop/main';
 @import 'register-char/main';
+@import 'game-builder/main';

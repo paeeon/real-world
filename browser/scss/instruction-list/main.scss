@@ -1,5 +1,9 @@
 @import '../variables';
 
+.list-group-item {
+  border: $dark-blue;
+}
+
 a.list-group-item {
   &:hover {
     cursor: pointer;
@@ -7,5 +11,9 @@ a.list-group-item {
 }
 
 p.list-group-item-text {
-  color: $aqua-blue;
+  color: $medium-grey;
+}
+
+a.list-group-item .list-group-item-heading, button.list-group-item .list-group-item-heading {
+  margin-top: 6px;
 }

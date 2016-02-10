@@ -97,12 +97,12 @@ router.get('/build/:instructionId', function(req, res, next) {
 });
 
 var resolveEvent = function(gameId, eventToResolve) {
-  console.log("EVENT TO RESOLVE IN RESOLVEEVENT", eventToResolve);
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   gameRef.child('resolveTable').child(eventToResolve._id.toString())
     .once('value', function(snapshot) { //HERE IS WHERE I THINK THE PROBLEM IS NOW!!!!!!
       console.log("SNAPSHOT IS", snapshot.val());
-      eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val()); //
+      eventToResolve.eventThatOccurred = eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val()); //
+      console.log("EVENT TO RESOLVE IN RESOLVEEVENT", eventToResolve);
       textEvents(gameId, eventToResolve);
     });
 };

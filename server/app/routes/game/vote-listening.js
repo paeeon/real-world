@@ -19,10 +19,10 @@ gamesRef.on('child_added', function(dataSnapshot) {
     Event.findById(parentRef.key()).exec()
     .then(function(currentEvent) {
       if (childSnapshot.numChildren()-1 === currentEvent.targets.length) {
-        var parent;
-        parentRef.once('value', function(parentSnap){
-          parent = parentSnap.val();
-        });
+        // var parent;
+        // parentRef.once('value', function(parentSnap){
+        //   parent = parentSnap.val();
+        // });
         // console.log(parent)
         childSnapshot.forEach(function(snapshot) {
           console.log("SNAPSHOT INSIDE CHILD IS", snapshot.val());
@@ -60,9 +60,9 @@ gamesRef.on('child_added', function(dataSnapshot) {
       });
       console.log("DOES THE CURRENT EVENT HAVE A WILL RESOLVE?", currentEvent.decision);
       if (currentEvent.decision.willResolve) {
-        //CHECK THIS!! this should work.
-        console.log("HEY WHAT IS HAPPENING HERE");
-        gameRef.child('resolveTable').child(currentEvent._id.toString()).set(winningVote.winner); //input winningVote.winner
+
+
+        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); //input winningVote.winner
         //need to make this asynchronous (.THEN OFF OF IT) --might be okay
       }
       return votes[winningVote.winner].willTrigger;

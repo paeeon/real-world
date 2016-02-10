@@ -353,7 +353,7 @@ var seedEvents = function() {
     }, {
       title: "Andrew Guess",
       triggeredBy: 'time',
-      type: 'text',
+      type: 'choice',
       eventThatOccurred: 'What is Lily\'s favorite color?',
       decision: {
         willResolveName: 'Andrew Guess to Everyone',
@@ -382,7 +382,7 @@ var seedEvents = function() {
       needsResolution: 'true',
       triggeredBy: 'time',
       type: 'text',
-      eventThatOccurred: 'Andrew thinks Lily\'s favorite color is: PLACEHOLDER',
+      eventThatOccurred: 'Andrew thinks Lily\'s favorite color is: PLACEHOLDER. Her real favorite color is: Blue',
       targets: characterIds,
       timed: {
         cause: 'game',

@@ -10,8 +10,12 @@ var Event = mongoose.model('Event');
 router.post('/gameInfo', function(req, res, next) {
   Game.create(req.body)
   .then(function(createdGame) {
-    res.status(201).json(createdGame);
-  }).then(null, next);
+    return Event.createEndGame(createdGame._id)
+  })
+  .then(function(updateGame){
+    res.status(201).json(updatedGame);
+  })
+  .then(null, next);
 });
 
 // create characters

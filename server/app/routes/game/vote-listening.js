@@ -1,14 +1,12 @@
 var gamesRef = new Firebase("https://character-test.firebaseio.com/games/");
 gamesRef.on('child_added', function(dataSnapshot) {
-  var game = dataSnapshot.key();
-  var gameRef = gamesRef.child(game);
+  var gameId = dataSnapshot.key();
+  var gameRef = gamesRef.child(gameId);
   var voteRef = gameRef.child('votes');
   var mongoose = require('mongoose');
   var Event = mongoose.model('Event');
-  var i = 0;
   voteRef.on('child_changed', function(childSnapshot, prevChildKey) {
     var eventHandler = require('./index').eventHandler;
-    i++;
     var currentVote = childSnapshot.val();
     var parentRef = voteRef.child(childSnapshot.key());
     var votes = {};
@@ -55,7 +53,7 @@ gamesRef.on('child_added', function(dataSnapshot) {
     }).then(function(toTrigger) {
       return Event.findById(toTrigger).exec();
     }).then(function(eventToTrigger) {
-      eventHandler[eventToTrigger.type](eventToTrigger);
+      eventHandler[eventToTrigger.type](gameId, eventToTrigger);
 
     }).then(null, console.log);
   });

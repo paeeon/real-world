@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var Game = require('./game')
 
 
 var schema = new mongoose.Schema({
@@ -19,7 +20,7 @@ var schema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['text', 'choice']
+    enum: ['text', 'choice', 'endGame']
   },
   eventThatOccurred: {
     type: String
@@ -59,5 +60,20 @@ var schema = new mongoose.Schema({
     }
   }
 });
+
+schema.statics.createEndGame = function (gameId) {
+  var Event = this;
+  var endGame ={
+    type: 'endGame',
+  };
+  return Event.create(endGame)
+  .then(function(endGameEvent){
+    return Game.findById(gameId)
+    })
+  .then(function(foundGame){
+    foundGame.events.push(endGameEvent._id)
+    return foundGame.save();
+  })
+}
 
 mongoose.model('Event', schema);

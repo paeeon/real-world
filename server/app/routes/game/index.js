@@ -7,7 +7,7 @@ var _ = require('lodash');
 var Firebase = require('firebase');
 var Chance = require('chance');
 var chance = new Chance();
-
+var resolveCharacterGoals = require('./resolution')
 router.get('/', function(req, res, next) {
   Game.find({})
     .then(games => {
@@ -133,6 +133,9 @@ var eventHandler = {
         answered: false
       });
     });
+  },
+  gameEnd: function(gameId, endEvent){
+    resolveCharacterGoals(gameID);
   }
 
 }
@@ -229,10 +232,12 @@ router.get('/:gameId', function(req, res, next) {
     .then(null, next);
 });
 
-router.post('/event/:eventId', function(req, res, next) {
-  Event.findById(req.params.eventId).exec()
+router.post('/:gameId/event/:eventId', function(req, res, next) {
+  var eventId = req.params.eventId
+  var gameId = req.params.gameId
+  Event.findById(event).exec()
     .then(function(foundEvent) {
-      eventHandler[foundEvent.type](foundEvent);
+      eventHandler[foundEvent.type](gameId);
     }).then(null, next);
 });
 

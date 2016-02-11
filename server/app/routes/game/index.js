@@ -137,8 +137,8 @@ var eventHandler = {
   gameEnd: function(gameId, endEvent){
     resolveCharacterGoals(gameId);
   }
-
 }
+
 var timesCalled = 0;
 // Function for starting timed events
 var startTimed = function(gameId) {

@@ -135,7 +135,7 @@ var eventHandler = {
     });
   },
   gameEnd: function(gameId, endEvent){
-    resolveCharacterGoals(gameID);
+    resolveCharacterGoals(gameId);
   }
 
 }

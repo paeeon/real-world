@@ -168,6 +168,9 @@ var startTimed = function(gameId) {
     }
   });
 
+  console.log("Timed array", timed);
+  console.log("EventTriggered array", eventTriggered);
+
   // Organize the events in the timed array, in order from latest to the soonest
   timed.sort(function(a, b) {
     return b.timed.timeout - a.timed.timeout;
@@ -193,6 +196,7 @@ var startTimed = function(gameId) {
     //      object at the requested location).
     if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout * 60 * 1000) {
       var currentEvent = timed.pop();
+      console.log(currentEvent);
       // if this event will trigger another event
       if (currentEvent.willTrigger) {
         var eventIdx;
@@ -206,6 +210,7 @@ var startTimed = function(gameId) {
           }
         })[0];
         eventTriggered.splice(eventIdx, 1);
+        invokeEvent(gameId, currentEvent);
         setTimeout(function () {
           invokeEvent(gameId, eventToTrigger);
         }, eventToTrigger.timed.timeout * 60 * 1000);

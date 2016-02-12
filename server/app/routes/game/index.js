@@ -196,43 +196,7 @@ var startTimed = function(gameId) {
     //      object at the requested location).
     if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout * 60 * 1000) {
       var currentEvent = timed.pop();
-      console.log(currentEvent);
-      // if this event will trigger another event
-      if (currentEvent.willTrigger) {
-        var eventIdx;
-        var eventToTrigger = eventTriggered.filter(function(event, i) {
-          if (event._id == currentEvent.willTrigger) {
-            eventIdx = i;
-            return true;
-          }
-          else {
-            return false;
-          }
-        })[0];
-        eventTriggered.splice(eventIdx, 1);
-        invokeEvent(gameId, currentEvent);
-        setTimeout(function () {
-          invokeEvent(gameId, eventToTrigger);
-        }, eventToTrigger.timed.timeout * 60 * 1000);
-      }
-      // if this event will resolve another event
-      else if (currentEvent.decision.willResolve) {
-        var eventIdx;
-        var eventToResolve = eventTriggered.filter(function(theEvent, i) {
-          if (theEvent._id == currentEvent.decision.willResolve) {
-            eventIdx = i;
-            return true;
-          }
-          else {
-            return false;
-          }
-        })[0];
-        eventTriggered.splice(eventIdx, 1);
-        invokeEvent(gameId, currentEvent);
-        invokeEvent(gameId, eventToResolve);
-      } else {
-        invokeEvent(gameId, currentEvent);
-      }
+      eventNest(currentEvent, eventTriggered, gameId);
     }
   }, 500);
 };
@@ -248,6 +212,59 @@ function invokeEvent(gameId, currentEvent) {
       targets: currentEvent.targets
     }
   });
+}
+
+function eventNest(currentEvent, eventTriggeredArr, gameId, idx) {
+  // if the event is triggered by an event
+  // remove it from event triggered array
+  if (idx) {
+    eventTriggeredArr.splice(idx, 1);
+  }
+  // if the event will trigger another event
+  if (currentEvent.willTrigger) {
+    var eventIdx;
+    // find the event that it triggers
+    var eventToTrigger = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.willTrigger) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for triggered event
+    setTimeout(function () {
+      // run eventNest with the triggered event on timeout
+      eventNest(eventToTrigger, eventTriggeredArr, gameId, eventIdx);
+    }, eventToTrigger.timed.timeout * 60 * 1000);
+  }
+  // if this event will resolve another event
+  else if (currentEvent.decision.willResolve) {
+    var eventIdx;
+    // find the event that it resolves
+    var eventToResolve = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.decision.willResolve) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for event to be resolved
+    setTimeout(function () {
+      // run eventNest with the event that needs to be resolved
+      eventNest(eventToResolve, eventTriggeredArr, gameId, eventIdx);
+    }, eventToResolve.timed.timeout * 60 * 1000);
+  } else {
+    return invokeEvent(gameId, currentEvent);
+  }
+
 }
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!

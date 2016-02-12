@@ -7,7 +7,7 @@ function resolveAllCharacters(gameId){
 		//uses the firebase forEach to cycle through the snapshot
 		charsSnapshot.forEach(function(charSnap){
 			var character = charSnap.val();
-			charSnap.ref().child('message').push({message:"Game Over"})
+			charSnap.ref().child('message').push({message:"The Game is Over! Thanks For Playing!"})
 			//sets the characters equal to the snapshot and calls on helper function
 			//to resolve that characters goals
 			resolveCharacterGoals(character, gameId);
@@ -29,20 +29,24 @@ function resolveCharacterGoals(character, gameId){
 		if (goal.type === 'event'){
 			// grabs a value from the resolve table to check against acceptable 
 			// strings for goal success
-			gameRef.child('resolveTable').child(goal.resolvedBy.toString())
+			gameRef.child('resolveTable').child(goal.resolvedBy)
 			.once('value', function(dataSnapshot){
 				//assigns answer to the snapshot from the resolve table
 				var answer = dataSnapshot.val();
 				var status = false;
+				console.log(goal.acceptedValues, goal.acceptedValues.indexOf(answer));
 				// if answer is acceptable change status to true;
-				if (goal.acceptedValues.indexOf(answer) > -1) status = true;
+				if (goal.acceptedValues.indexOf(answer) > -1) {
+					status = true;
+					console.log(status)
+				}
 				// update the goal to it's appropriate resolution status
 				var goalRef = charRef.child("goals").child(index).update({resolved:status})
 				.then(function(goalSnap){
 
 					//send message to character based that goals success or failure
 					charRef.child("message").push({message: "The Goal: " + goal.description 
-						+ " has " + goalEval[goal.resolved]})
+						+ " has " + goalEval[status]})
 				})
 			})
 		}

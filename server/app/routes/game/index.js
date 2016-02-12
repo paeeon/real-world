@@ -8,6 +8,7 @@ var Firebase = require('firebase');
 var Chance = require('chance');
 var chance = new Chance();
 var resolveAllCharacters = require('./resolution')
+
 router.get('/', function(req, res, next) {
   Game.find({})
     .then(games => {
@@ -52,7 +53,7 @@ router.get('/build/:instructionId', function(req, res, next) {
           return goal
         })
         characterMap[character._id] = character;
-      })
+      });
       var choiceEvents = {};
       var resolve = {};
       game.events.forEach(function(event) {
@@ -67,7 +68,7 @@ router.get('/build/:instructionId', function(req, res, next) {
         }
         if (event.needsResolution) {
             var id = event._id.toString();
-            resolve[id] = 'replace';
+            resolve[id] = 'PLACEHOLDER';
           }
       });
       game.votes = choiceEvents;
@@ -76,7 +77,7 @@ router.get('/build/:instructionId', function(req, res, next) {
       game.resolveTable = resolve;
       characters = _.shuffle(game.characters);
       idFix(game);
-      return myFirebaseRef.child('games').push(game)
+      return myFirebaseRef.child('games').push(game);
     }).then(function(builtGame) {
       gameRef = builtGame;
       gameID = gameRef.key();
@@ -90,21 +91,47 @@ router.get('/build/:instructionId', function(req, res, next) {
         pool: 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
       });
       gameShortIdConverter[randomShortId] = gameID;
-      return myFirebaseRef.child('games').child("gameShortIdConverter").update(gameShortIdConverter)
+      return myFirebaseRef.child('games')
+        .child("gameShortIdConverter")
+        .update(gameShortIdConverter);
     }).then(function() {
       gameShortIdConverter = {};
       res.json(gameID);
     }).then(null, console.log);
 });
 
-var resolveEvent = function(gameId, eventToResolve) {
+var eventHandler = {
+  // pushes the most recent message to a characters firebase message array
+  // which will be displayed on the characters dashboard
+  text: function(gameId, textEvent) {
+    if (textEvent.needsResolution) {
+      return resolveEvent(gameId, textEvent);
+    }
+    else if (textEvent.endsGame.toString() === "true") {
+      return resolveAllCharacters(gameId);
+    } //investigate this further
+    else {
+      return textEvents(gameId, textEvent);
+    } //investigate this further
+  },
+  // pushes a choice to the characters decisions firebase array
+  // which will be displayed on the characters dashboard
+  choice: function(gameId, choiceEvent) {
+    return choiceEvents(gameId, choiceEvent);
+  }
+};
+// helper function
+function resolveEvent(gameId, eventToResolve) {
   var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
   gameRef.child('resolveTable').child(eventToResolve._id.toString())
-    .once('value', function(snapshot) { //HERE IS WHERE I THINK THE PROBLEM IS NOW!!!!!!
-      eventToResolve.eventThatOccurred = eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val()); //
-      textEvents(gameId, eventToResolve);
-    });
-};
+  .on('value', function(snapshot) { //HERE IS WHERE I THINK THE PROBLEM IS NOW!!!!!!
+    if (snapshot.val() !== 'PLACEHOLDER') {
+      eventToResolve.eventThatOccurred = eventToResolve.eventThatOccurred.replace('PLACEHOLDER', snapshot.val());
+      gameRef.child('resolveTable').child(eventToResolve._id.toString()).off('value');
+      return textEvents(gameId, eventToResolve);
+    }
+  });
+}
 
 // This is a helper function for resolveEvent. It pushes to a character's 'message's
 // when an event happens.
@@ -117,39 +144,26 @@ function textEvents(gameId, textEvent) {
     });
   });
 }
-
-var eventHandler = {
-  // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
-  text: function(gameId, textEvent) {
-    if (textEvent.needsResolution) resolveEvent(gameId, textEvent); //investigate this further
-    else if (textEvent.endsGame.toString() === "true") {
-      console.log("here")
-      resolveAllCharacters(gameId);
-    }
-    else textEvents(gameId, textEvent); //investigate this further
-  },
-
-  // pushes a choice to the characters decisions firebase array which will be displayed on the characters dashboard
-  choice: function(gameId, choiceEvent) {
-    var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
-    choiceEvent.targets.forEach(function(targetId) {
-      targetId = targetId.toString();
-      gameRef.child('characters').child(targetId).child("decisions").push({
-        eventId: choiceEvent._id,
-        message: choiceEvent.eventThatOccurred || "",
-        decision: choiceEvent.decision,
-        answered: false
-      });
+// helper function
+function choiceEvents(gameId, choiceEvent) {
+  var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
+  choiceEvent.targets.forEach(function(targetId) {
+    targetId = targetId.toString();
+    gameRef.child('characters').child(targetId).child("decisions").push({
+      eventId: choiceEvent._id,
+      message: choiceEvent.eventThatOccurred || "",
+      decision: choiceEvent.decision,
+      answered: false
     });
-  }
+  });
 }
 
-var timesCalled = 0;
 // Function for starting timed events
 var startTimed = function(gameId) {
   gameStarted[gameId] = true;
 
   var timed = [];
+  var eventTriggered = [];
   var game = games[gameId];
   // Loop through the keys of each of the game's events
   Object.keys(game.events).forEach(function(eventKey) {
@@ -157,8 +171,13 @@ var startTimed = function(gameId) {
     // push that game event to the 'timed' array.
     if (game.events[eventKey].triggeredBy === "time") {
       timed.push(game.events[eventKey]);
+    } else if (game.events[eventKey].triggeredBy === 'event') {
+      eventTriggered.push(game.events[eventKey]);
     }
   });
+
+  // console.log("Timed array", timed);
+  console.log("EventTriggered array", eventTriggered);
 
   // Organize the events in the timed array, in order from latest to the soonest
   timed.sort(function(a, b) {
@@ -183,21 +202,83 @@ var startTimed = function(gameId) {
     //      This inner object has a key of name and a value of the eventThatOccurred
     //      (i.e., "The winners have been announced!"), or an empty string (if nothing exists on that
     //      object at the requested location).
-    if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout) {
+
+    // unComment this line when not testing!
+    // if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout) {
+    if (Date.now() - game.startTime >= timed[timed.length - 1].timed.timeout * 60 * 1000) {
       var currentEvent = timed.pop();
-      eventHandler[currentEvent.type](gameId, currentEvent)
-      var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
-      gameRef.child("pastEvents").child("timed").push({
-        pastEvent: {
-          name: currentEvent.eventThatOccurred || "",
-          type: currentEvent.type,
-          decision: currentEvent.decision || "",
-          targets: currentEvent.targets
-        }
-      });
+      eventNest(currentEvent, eventTriggered, gameId);
     }
-  }, 500)
+  }, 500);
 };
+
+function invokeEvent(gameId, currentEvent) {
+  eventHandler[currentEvent.type](gameId, currentEvent);
+  var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
+  gameRef.child("pastEvents").child("timed").push({
+    pastEvent: {
+      name: currentEvent.eventThatOccurred || "",
+      type: currentEvent.type,
+      decision: currentEvent.decision || "",
+      targets: currentEvent.targets
+    }
+  });
+}
+
+function eventNest(currentEvent, eventTriggeredArr, gameId, idx) {
+  // if the event is triggered by an event
+  // remove it from event triggered array
+  if (idx) {
+    eventTriggeredArr.splice(idx, 1);
+  }
+  // if the event will trigger another event
+  if (currentEvent.willTrigger) {
+    var eventIdx;
+    // find the event that it triggers
+    var eventToTrigger = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.willTrigger) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for triggered event
+    setTimeout(function () {
+      // run eventNest with the triggered event on timeout
+      eventNest(eventToTrigger, eventTriggeredArr, gameId, eventIdx);
+    }, eventToTrigger.timed.timeout * 60 * 1000); //uncomment when not testing
+    // }, eventToTrigger.timed.timeout);
+  }
+  // if this event will resolve another event
+  else if (currentEvent.decision.willResolve) {
+    var eventIdx;
+    // find the event that it resolves
+    var eventToResolve = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.decision.willResolve) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for event to be resolved
+    setTimeout(function () {
+      // run eventNest with the event that needs to be resolved
+      eventNest(eventToResolve, eventTriggeredArr, gameId, eventIdx);
+    }, eventToResolve.timed.timeout * 60 * 1000); //uncomment when not testing
+    // }, eventToResolve.timed.timeout);
+  } else {
+    return invokeEvent(gameId, currentEvent);
+  }
+
+}
 
 // we should put in a safeguard when we launch to disallow a user from loggin in twice!
 router.post('/:gameId/register-character', function(req, res, next) {
@@ -237,15 +318,14 @@ router.get('/:gameId', function(req, res, next) {
     .then(null, next);
 });
 
-router.post('/:gameId/event/:eventId', function(req, res, next) {
-  var eventId = req.params.eventId
-  var gameId = req.params.gameId
-  Event.findById(event).exec()
+router.post('/event/:eventId', function(req, res, next) {
+  Event.findById(req.params.eventId).exec()
     .then(function(foundEvent) {
-      eventHandler[foundEvent.type](gameId);
+      eventHandler[foundEvent.type](foundEvent);
     }).then(null, next);
 });
 
+// require in vote listener file to turn on vote event listener
 require('./vote-listening.js')
 module.exports = {
   router: router,

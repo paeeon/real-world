@@ -12,7 +12,7 @@ router.post('/gameInfo', function(req, res, next) {
   .then(function(createdGame) {
     return Event.createEndGame(createdGame._id)
   })
-  .then(function(updateGame){
+  .then(function(updatedGame){
     res.status(201).json(updatedGame);
   })
   .then(null, next);

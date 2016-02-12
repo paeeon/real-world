@@ -7,6 +7,7 @@ function resolveAllCharacters(gameId){
 		//uses the firebase forEach to cycle through the snapshot
 		charsSnapshot.forEach(function(charSnap){
 			var character = charSnap.val();
+			charSnap.ref().child('message').push({message:"Game Over"})
 			//sets the characters equal to the snapshot and calls on helper function
 			//to resolve that characters goals
 			resolveCharacterGoals(character, gameId);
@@ -15,13 +16,14 @@ function resolveAllCharacters(gameId){
 }
 // Resolves a single characters goals and gives characters a message on each goals success or failure
 function resolveCharacterGoals(character, gameId){
+
 // Object for success or failure message keyed to a characters success or failure Boolean
 	var goalEval = {
 		true : "succeeded!",
 		false : "failed."
 	}
 	var gameRef = new Firebase("https://character-test.firebaseio.com/games/" + gameId);
-	var charRef =	gameRef.child(characters).child(character._id.toString())
+	var charRef =	gameRef.child("characters").child(character._id.toString())
 	//cycles through all goals on the character
 	character.goals.forEach(function(goal, index){
 		if (goal.type === 'event'){
@@ -35,11 +37,11 @@ function resolveCharacterGoals(character, gameId){
 				// if answer is acceptable change status to true;
 				if (goal.acceptedValues.indexOf(answer) > -1) status = true;
 				// update the goal to it's appropriate resolution status
-				var goalRef = charRef.child(goals).child(index).update({resolved:status})
+				var goalRef = charRef.child("goals").child(index).update({resolved:status})
 				.then(function(goalSnap){
-					var goal = goalSnap.val();
+
 					//send message to character based that goals success or failure
-					character.messages.push({message: "The Goal: " + goal.description 
+					charRef.child("message").push({message: "The Goal: " + goal.description 
 						+ " has " + goalEval[goal.resolved]})
 				})
 			})
@@ -47,4 +49,4 @@ function resolveCharacterGoals(character, gameId){
 	})
 }
 
-module.exports = resolveCharacterGoals;
+module.exports = resolveAllCharacters;

@@ -7,7 +7,7 @@ var _ = require('lodash');
 var Firebase = require('firebase');
 var Chance = require('chance');
 var chance = new Chance();
-var resolveCharacterGoals = require('./resolution')
+var resolveAllCharacters = require('./resolution')
 router.get('/', function(req, res, next) {
   Game.find({})
     .then(games => {
@@ -47,6 +47,10 @@ router.get('/build/:instructionId', function(req, res, next) {
       var characterMap = {};
       var eventMap = {};
       game.characters.forEach(function(character) {
+        character.goals = character.goals.map(function(goal){
+          if (goal.resolvedBy) goal.resolvedBy = goal.resolvedBy.toString();
+          return goal
+        })
         characterMap[character._id] = character;
       })
       var choiceEvents = {};
@@ -118,6 +122,10 @@ var eventHandler = {
   // pushes the most recent message to a characters firebase message array which will be displayed on the characters dashboard
   text: function(gameId, textEvent) {
     if (textEvent.needsResolution) resolveEvent(gameId, textEvent); //investigate this further
+    else if (textEvent.endsGame.toString() === "true") {
+      console.log("here")
+      resolveAllCharacters(gameId);
+    }
     else textEvents(gameId, textEvent); //investigate this further
   },
 
@@ -133,9 +141,6 @@ var eventHandler = {
         answered: false
       });
     });
-  },
-  gameEnd: function(gameId, endEvent){
-    resolveCharacterGoals(gameId);
   }
 }
 

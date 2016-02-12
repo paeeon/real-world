@@ -45,8 +45,8 @@ gamesRef.on('child_added', function(dataSnapshot) {
       });
       if (currentEvent.decision.willResolve) {
 
-
-        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); //input winningVote.winner
+        //input winningVote.winner
+        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); 
         //need to make this asynchronous (.THEN OFF OF IT) --might be okay
       }
       return votes[winningVote.winner].willTrigger;

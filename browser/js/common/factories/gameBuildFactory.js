@@ -113,6 +113,7 @@ app.factory('gameBuildFactory', function($http) {
                 eventNest.decision.willResolve = choice._id;
                 choice.triggeredBy = 'event';
                 if (choice.columns[0][0]) {
+                  choice.willTrigger = choice.columns[0][0]._id;
                   choice.columns[0][0].triggeredBy = 'event';
                   gameBuildFactory.saveNestedEvents(choice.columns[0]);
                 }

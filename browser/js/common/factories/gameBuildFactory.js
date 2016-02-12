@@ -47,7 +47,6 @@ app.factory('gameBuildFactory', function($http) {
         });
     },
     updateEvent: function(eventToUpdate) {
-      console.log(eventToUpdate);
       return $http.put('/api/gameBuilder/' + eventToUpdate._id, eventToUpdate)
         .then(function(res) {
           return res.data;
@@ -81,7 +80,6 @@ app.factory('gameBuildFactory', function($http) {
         // check to see if the event has any events in columns
         // if it doesnt update event
         if (!eventNest.columns[0][0]) {
-          console.log('updating ', eventNest._id);
           // if it doesnt have any events to trigger
           // and we havent assigned triggeredBy to 'event'
           // the event will be triggered by 'time'
@@ -99,7 +97,6 @@ app.factory('gameBuildFactory', function($http) {
           // save the inner event to the willTrigger of that event
           // and triggeredBy of inner event to 'event'
           if (eventNest.type === 'text') {
-            console.log('text event with willTrigger');
             var innerEvent = eventNest.columns[0][0];
             eventNest.willTrigger = innerEvent._id;
             innerEvent.triggeredBy = 'event';
@@ -107,7 +104,6 @@ app.factory('gameBuildFactory', function($http) {
           }
           // if the event is a choice event
           else if (eventNest.type === 'choice') {
-            console.log('choice event with choices that willTrigger');
             // loop through the columns
             // (for choice events columns are the choices)
             eventNest.columns[0].forEach(function(choice, i) {
@@ -119,9 +115,8 @@ app.factory('gameBuildFactory', function($http) {
                 if (choice.columns[0][0]) {
                   choice.columns[0][0].triggeredBy = 'event';
                   gameBuildFactory.saveNestedEvents(choice.columns[0]);
-                } else {
-                  return gameBuildFactory.updateEvent(choice);
                 }
+                return gameBuildFactory.updateEvent(choice);
               }
               // if any of the choices triggers an event
               else if (choice.columns[0][0]) {

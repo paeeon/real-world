@@ -13,7 +13,7 @@ var schema = new mongoose.Schema({
         },
         type: {
             type: String,
-            enum: ['text', 'event']
+            enum: ['behavioral', 'event']
         },
         resolvedBy: {
             type: mongoose.Schema.Types.ObjectId,

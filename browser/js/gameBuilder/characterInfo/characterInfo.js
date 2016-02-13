@@ -8,15 +8,17 @@ app.config(function ($stateProvider) {
 
 app.controller('buildCharacter', function($scope, $q, $state, $stateParams, gameBuildFactory) {
   var gameId = $stateParams.gameId;
-  $scope.characters = [{}];
+  $scope.characters = [{goals:[{}]}];
 
   //add new character to game
   $scope.addNew = function(){
-    $scope.characters.push({});
+    $scope.characters.push({goals:[{}]});
   }
   $scope.remove = function(index){
-    console.log(index)
     if($scope.characters.length > 1) $scope.characters.splice(index,1);
+  }
+  $scope.goalType = function(goal){
+    return goal.type === 'event'
   }
   $scope.submitCharacters = function() {
     // create characters

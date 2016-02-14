@@ -318,10 +318,13 @@ router.get('/:gameId', function(req, res, next) {
     .then(null, next);
 });
 
-router.post('/event/:eventId', function(req, res, next) {
-  Event.findById(req.params.eventId).exec()
+//should refactor this to run off the firebase event table
+router.post('/game/:gameId/event/:eventId', function(req, res, next) {
+  var gameId = req.params.gameId;
+  var eventId = req.params.eventId
+  Event.findById(eventId).exec()
     .then(function(foundEvent) {
-      eventHandler[foundEvent.type](foundEvent);
+      invokeEvent(gameId, foundEvent);
     }).then(null, next);
 });
 
@@ -329,5 +332,6 @@ router.post('/event/:eventId', function(req, res, next) {
 require('./vote-listening.js')
 module.exports = {
   router: router,
-  eventHandler: eventHandler
+  eventHandler: eventHandler,
+  invokeEvent: invokeEvent
 };

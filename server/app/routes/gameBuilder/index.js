@@ -91,10 +91,7 @@ router.put('/characters/goals', function(req, res, next){
       return foundChar.save();
     })
   });
-  Character.findById(characters[0]._id)
-  .then(function(char){
-    console.log(char)
-  })
+  
   Promise.all(charPromises)
   .then(function(resolvedArray){
     res.send(resolvedArray);

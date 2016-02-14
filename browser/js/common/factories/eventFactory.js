@@ -5,7 +5,7 @@ app.factory('eventFactory', function($http) {
 
   var eventFactory = {};
   eventFactory.triggerEvent = function(gameId, eventId) {
-    return $http.get('/api/' +gameId + '/event/' + eventId)
+    return $http.get('/api/' + gameId + '/event/' + eventId)
       .then(extractData);
   }
 

@@ -86,9 +86,10 @@
       <h6>Goals</h6>
       <div ng-repeat="goal in character.goals" ng-show="goalType(goal)">
         <p>{{goal.description}}</p>
-        <select ng-model="goal.resolvedBy" ng-options="event._id as event.title for event in choiceEvents"></select>
+        <select ng-model="goal.resolvedBy" ng-options="event.decision.willResolve as event.title for event in choiceEvents"></select>
         <div ng-show="goal.resolvedBy">
           <select ng-model="goal.currentChoice" ng-options="choice.choice as choice.choice for choice in getChoices(goal.resolvedBy)"></select><button type="button" ng-click="addChoice(goal.currentChoice, goal)">+</button>
+          <button type="button" ng-click="hi(goal.resolvedBy)">++</button>
           <p><span ng-repeat="value in goal.acceptedValues">"{{value}}"  </span></p>
         </div>
       </div>

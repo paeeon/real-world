@@ -21,7 +21,6 @@ app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameB
   $scope.characters = characters;
   $scope.addChoice = function(choice, goal){
     goal.acceptedValues.push(choice)
-    console.log($scope.characters)
   }
 
   $scope.goalType = function(goal){
@@ -34,6 +33,13 @@ app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameB
     return numEventGoals.length > 0;
   }
 
+  $scope.hi = function(resolveId){
+    var choices  = $scope.choiceEvents.filter(function(event){
+      return event.decision.willResolve === resolveId;
+    })[0];
+    console.log(choices)
+  }
+
   $scope.eventList = events.map(function(theEvent) {
     return gameBuildFactory.nestedList(theEvent);
   });
@@ -43,11 +49,13 @@ app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameB
   })
 
   $scope.getChoices = function(eventId){
-    if (eventId){
-      return $scope.choiceEvents.filter(function(event){
-        return event._id == eventId;
-      })[0].decision.choices;
-    }
+    if(!eventId) return [];
+    console.log(eventId)
+    var choices  = $scope.choiceEvents.filter(function(event){
+      return event.decision.willResolve === eventId;
+    })[0].decision.choices;
+    console.log(choices)
+    return choices;
   }
 
   $scope.models = {

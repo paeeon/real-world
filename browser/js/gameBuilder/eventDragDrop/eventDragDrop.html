@@ -5,95 +5,88 @@
      assigned to it. If an element was dragged away, you have to remove
      it from the original list yourself using the dnd-moved attribute -->
 <script type="text/ng-template" id="list.html">
-  <ul dnd-list="list">
-    <li ng-repeat="item in list" dnd-draggable="item" dnd-effect-allowed="move" dnd-moved="list.splice($index, 1)" dnd-selected="models.selected = item" ng-class="{selected: models.selected === item}" ng-include="'container.html'">
-    </li>
-  </ul>
+    <ul dnd-list="list">
+        <li ng-repeat="item in list" dnd-draggable="item" dnd-effect-allowed="move" dnd-moved="list.splice($index, 1)" dnd-selected="models.selected = item" ng-class="{selected: models.selected === item}" ng-include="'container.html'">
+        </li>
+    </ul>
 </script>
-
 <!-- This template is responsible for rendering a container element. It uses
      the above list template to render each container column -->
 <script type="text/ng-template" id="container.html">
-  <div class="container-element box box-blue">
-    <span class="item-title pull-left">{{item.title}}</span>
-    <div class="minutes-after-game-start pull-right" ng-hide="item.choice">
-      <input type="number" name="time" ng-model="item.timed.timeout">
-      <span> minutes after</span>
+    <div class="container-element box box-blue">
+        <span class="item-title pull-left">{{item.title}}</span>
+        <div class="minutes-after-game-start pull-right" ng-hide="item.choice">
+            <input type="number" name="time" ng-model="item.timed.timeout">
+            <span> minutes after</span>
+        </div>
+        <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+        <div class="clearfix"></div>
     </div>
-    <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
-    <div class="clearfix"></div>
-  </div>
 </script>
-
 <!-- Sidebar -->
 <div class="col-md-3">
-  <div class="toolbox box box-grey box-padding">
-    <h3>Events</h3>
-    <ul>
-      <!-- The toolbox only allows to copy objects, not move it. After a new
+    <div class="toolbox box box-grey box-padding">
+        <h3>Events</h3>
+        <ul>
+            <!-- The toolbox only allows to copy objects, not move it. After a new
       element was created, dnd-copied is invoked and we generate the next id -->
-      <li ng-repeat="item in eventList" dnd-draggable="item" dnd-moved="eventList.splice($index, 1)">
-        <div class="btn-drag-drop-event">
-          <p class="event-title">{{item.title}}</p>
-          <p class="event-description">{{ item.eventThatOccurred }}</p>
-          <p class="indicator" ng-show="item.needsResolution"><i class="margin-left fa fa-exclamation margin-right"></i> Has a placeholder. Must be dropped inside of a Choice event in order for the PLACEHOLDER to be filled in with a Choice.</p>
-        </div>
-      </li>
-    </ul>
-  </div>
+            <li ng-repeat="item in eventList" dnd-draggable="item" dnd-moved="eventList.splice($index, 1)">
+                <div class="btn-drag-drop-event">
+                    <p class="event-title">{{item.title}}</p>
+                    <p class="event-description">{{ item.eventThatOccurred }}</p>
+                    <p class="indicator" ng-show="item.needsResolution"><i class="margin-left fa fa-exclamation margin-right"></i> Has a placeholder. Must be dropped inside of a Choice event in order for the PLACEHOLDER to be filled in with a Choice.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
-
 <!-- Main area with dropzones and source code -->
 <div class="col-md-6">
-  <div class="row">
-    <div ng-repeat="(zone, list) in models.dropzones">
-      <div class="dropzone box box-yellow">
-        <!-- The dropzone also uses the list template -->
-        <h3>Game Timeline</h3>
-        <div ng-include="'list.html'"></div>
-      </div>
-    </div>
-  </div>
-  <div view-source="nested"></div>
-  <h2>Generated Model</h2>
-  <pre>{{modelAsJson}}</pre>
-</div
-
-<div class="col-md-3">
-  <button id="game-submit" class="btn btn-aqua btn-lg" ng-click="submitNest(models.dropzones.A, characters)">Save game</button>
-  <div ng-if="models.selected" class="box box-grey box-padding">
-    <h3>{{ models.selected.title }}</h3>
-    <hr>
-    <h5 ng-show="models.selected.type">Type of event</h5>
-    <p class="list-group-item-text">{{ models.selected.type }}</p>
-
-    <h5 ng-show="models.selected.eventThatOccurred">Description</h5>
-    <p class="list-group-item-text">{{ models.selected.eventThatOccurred }}</p>
-
-    <h5 ng-show="models.selected.decision.question">Question</h5>
-    <p class="list-group-item-text">{{ models.selected.decision.question }}</p>
-
-    <h5 ng-show="models.selected.decision.question">Choices</h5>
-    <p ng-repeat="choice in models.selected.decision.choices" class="list-group-item-text">{{ choice.choice }}</p>
-  </div>
- <div class="container">
-   <h3>Define Character Goals</h3>
-   <p>"Event" Goals succeed or fail based on character choices. For each goal listed below select a choice event.  If the result of the choice or vote event is one of your defined accpeted values</p>
-   <p>For each Goal Below, please select an Event and select accpeted values.</p>
-   <div ng-model="characters">
-    <div ng-repeat="character in characters" ng-show="hasEventGoals(character.goals)">
-      <h5>{{character.name}}</h5>
-      <h6>Goals</h6>
-      <div ng-repeat="goal in character.goals" ng-show="goalType(goal)">
-        <p>{{goal.description}}</p>
-        <select ng-model="goal.resolvedBy" ng-options="event.decision.willResolve as event.title for event in choiceEvents"></select>
-        <div ng-show="goal.resolvedBy">
-          <select ng-model="goal.currentChoice" ng-options="choice.choice as choice.choice for choice in getChoices(goal.resolvedBy)"></select><button type="button" ng-click="addChoice(goal.currentChoice, goal)">+</button>
-          <button type="button" ng-click="hi(goal.resolvedBy)">++</button>
-          <p><span ng-repeat="value in goal.acceptedValues">"{{value}}"  </span></p>
+    <div class="row">
+        <div ng-repeat="(zone, list) in models.dropzones">
+            <div class="dropzone box box-yellow">
+                <!-- The dropzone also uses the list template -->
+                <h3>Game Timeline</h3>
+                <div ng-include="'list.html'"></div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</div> 
+    <div view-source="nested"></div>
+    <h2>Generated Model</h2>
+    <pre>{{modelAsJson}}</pre>
+</div>
+<div class="col-md-3">
+    <button id="game-submit" class="btn btn-aqua btn-lg" ng-click="submitNest(models.dropzones.A, characters)">Save game</button>
+    <div ng-if="models.selected" class="box box-grey box-padding">
+        <h3>{{ models.selected.title }}</h3>
+        <hr>
+        <h5 ng-show="models.selected.type">Type of event</h5>
+        <p class="list-group-item-text">{{ models.selected.type }}</p>
+        <h5 ng-show="models.selected.eventThatOccurred">Description</h5>
+        <p class="list-group-item-text">{{ models.selected.eventThatOccurred }}</p>
+        <h5 ng-show="models.selected.decision.question">Question</h5>
+        <p class="list-group-item-text">{{ models.selected.decision.question }}</p>
+        <h5 ng-show="models.selected.decision.question">Choices</h5>
+        <p ng-repeat="choice in models.selected.decision.choices" class="list-group-item-text">{{ choice.choice }}</p>
+    </div>
+    <div class="container">
+        <h3>Define Character Goals</h3>
+        <p>"Event" Goals succeed or fail based on character choices. For each goal listed below select a choice event. If the result of the choice or vote event is one of your defined accpeted values</p>
+        <p>For each Goal Below, please select an Event and select accpeted values.</p>
+        <div ng-model="characters">
+            <div ng-repeat="character in characters" ng-show="hasEventGoals(character.goals)">
+                <h5>{{character.name}}</h5>
+                <h6>Goals</h6>
+                <div ng-repeat="goal in character.goals" ng-show="goalType(goal)">
+                    <p>{{goal.description}}</p>
+                    <select ng-model="goal.resolvedBy" ng-options="event.decision.willResolve as event.title for event in choiceEvents"></select>
+                    <div ng-show="goal.resolvedBy">
+                        <select ng-model="goal.currentChoice" ng-options="choice.choice as choice.choice for choice in getChoices(goal.resolvedBy)"></select>
+                        <button type="button" ng-click="addChoice(goal.currentChoice, goal)">+</button>
+                        <p><span ng-repeat="value in goal.acceptedValues track by $index">"{{value}}"  <button type="button" ng-click="removeChoice(goal.acceptedValues, $index)">x</button>  </span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

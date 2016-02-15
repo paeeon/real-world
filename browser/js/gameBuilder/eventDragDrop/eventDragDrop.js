@@ -23,6 +23,10 @@ app.controller('eventDragDropCtrl', function($scope, $state, $stateParams, gameB
     goal.acceptedValues.push(choice)
   }
 
+  $scope.removeChoice = function(valueArray, index){
+    valueArray.splice(index,1);
+  }
+
   $scope.goalType = function(goal){
     return goal.type === 'event'
   }

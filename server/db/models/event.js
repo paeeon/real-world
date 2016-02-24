@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
-
-
+var Game;
 var schema = new mongoose.Schema({
   title: {
     type: String
@@ -57,7 +56,31 @@ var schema = new mongoose.Schema({
     timeout: {
       type: Number
     }
+  },
+  endsGame:{
+    type:Boolean,
+    default: false
   }
 });
+
+schema.statics.createEndGame = function (gameId) {
+  var Event = this;
+  var endGameEvent;
+  Game = mongoose.model('Game');
+  var endGame ={
+    type: 'text',
+    endsGame:true
+  };
+  return Event.create(endGame)
+  .then(function(newGame){
+    endGameEvent = newGame;
+    return Game.findById(gameId)
+    })
+  .then(function(foundGame){
+    foundGame.events.push(endGameEvent._id)
+    // console.log(foundGame.save())
+    return foundGame.save();
+  })
+}
 
 mongoose.model('Event', schema);

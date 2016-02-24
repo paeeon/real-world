@@ -39,7 +39,9 @@ var seedCharacters = function() {
       background: 'An inquisitive fellow who loves colors and questions. He just wants to know more about both.',
       goals: [{
         description: 'Find out Lily\'s favorite color.',
-        visibility: true
+        visibility: true,
+        type:'event',
+        acceptedValues:['blue'],
       }],
       abilities: [
         {
@@ -75,7 +77,7 @@ var seedCharacters = function() {
       background: 'Mike would never lie about colors. He would lie to help his friend Lily, though.',
       goals: [{
         description: 'To help Lily keep her secret.',
-        visibility: true
+        visibility: true,
       }],
       abilities: [{
         description: 'Knows Lily\'s favorite color.',
@@ -174,7 +176,7 @@ var seedEvents = function() {
       targets: findCharacters(['Nicole']),
       timed: {
         cause: 'game',
-        timeout: 10001
+        timeout: 101
       }
     }, {
       title: 'Mike Poll',
@@ -201,7 +203,7 @@ var seedEvents = function() {
       targets: findCharacters(['Mike']),
       timed: {
         cause: 'game',
-        timeout: 10002
+        timeout: 102
       }
     }, {
       title: 'Lily Answer',
@@ -212,7 +214,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 21000
+        timeout: 2100
       }
     }, {
       title: 'Nicole Answer',
@@ -223,7 +225,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 21001
+        timeout: 211
       }
     }, {
       title: 'Mike Answer',
@@ -234,7 +236,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 21002
+        timeout: 212
       }
     }, {
       title: 'Lily Poll #2',
@@ -261,7 +263,7 @@ var seedEvents = function() {
       targets: findCharacters(['Lily']),
       timed: {
         cause: 'game',
-        timeout: 33001
+        timeout: 331
       }
     }, {
       title: 'Nicole Poll #2',
@@ -288,7 +290,7 @@ var seedEvents = function() {
       targets: findCharacters(['Nicole']),
       timed: {
         cause: 'game',
-        timeout: 33002
+        timeout: 332
       }
     }, {
       title: 'Mike Poll #2',
@@ -315,7 +317,7 @@ var seedEvents = function() {
       targets: findCharacters(['Mike']),
       timed: {
         cause: 'game',
-        timeout: 33003
+        timeout: 333
       }
     }, {
       title: 'Mike Answer #2',
@@ -326,7 +328,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 45000
+        timeout: 450
       }
     }, {
       title: 'Nicole Answer #2',
@@ -337,7 +339,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 45001
+        timeout: 451
       }
     }, {
       title: 'Lily Answer #2',
@@ -348,7 +350,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 45002
+        timeout: 452
       }
     }, {
       title: "Andrew Guess",
@@ -375,7 +377,7 @@ var seedEvents = function() {
       targets: findCharacters(['Andrew']),
       timed: {
         cause: 'game',
-        timeout: 50000
+        timeout: 500
       }
     }, {
       title: "Andrew Guess to Everyone",
@@ -386,7 +388,19 @@ var seedEvents = function() {
       targets: characterIds,
       timed: {
         cause: 'game',
-        timeout: 65000
+        timeout: 650
+      }
+    },{
+      title: "endGame",
+      needsResolution: false,
+      triggeredBy: 'time',
+      type: 'text',
+      eventThatOccurred: 'Andrew thinks Lily\'s favorite color is: PLACEHOLDER. Her real favorite color is: Blue',
+      targets: characterIds,
+      endsGame: true,
+      timed: {
+        cause: 'game',
+        timeout: 700
       }
     }
   ];

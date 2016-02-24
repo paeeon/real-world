@@ -5,10 +5,8 @@ gamesRef.on('child_added', function(dataSnapshot) {
   var voteRef = gameRef.child('votes');
   var mongoose = require('mongoose');
   var Event = mongoose.model('Event');
-  var i = 0;
   voteRef.on('child_changed', function(childSnapshot, prevChildKey) {
     var eventHandler = require('./index').eventHandler;
-    i++;
     var currentVote = childSnapshot.val();
     var parentRef = voteRef.child(childSnapshot.key());
     var votes = {};
@@ -46,9 +44,8 @@ gamesRef.on('child_added', function(dataSnapshot) {
         }
       });
       if (currentEvent.decision.willResolve) {
-
-
-        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); //input winningVote.winner
+        //input winningVote.winner
+        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); 
         //need to make this asynchronous (.THEN OFF OF IT) --might be okay
       }
       return votes[winningVote.winner].willTrigger;

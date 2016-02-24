@@ -4,14 +4,19 @@ var mongoose = require('mongoose');
 var Game = mongoose.model('Game');
 var Character = mongoose.model('Character');
 var Event = mongoose.model('Event');
+var Promise = require('bluebird')
 
 // create game
 // POST /api/gameBuilder/gameInfo
 router.post('/gameInfo', function(req, res, next) {
   Game.create(req.body)
   .then(function(createdGame) {
-    res.status(201).json(createdGame);
-  }).then(null, next);
+    return Event.createEndGame(createdGame._id)
+  })
+  .then(function(updatedGame){
+    res.status(201).json(updatedGame);
+  })
+  .then(null, next);
 });
 
 // create characters
@@ -73,6 +78,26 @@ router.get('/:gameId/characters', function(req, res, next) {
     res.status(200).json(foundGame.characters);
   }).then(null, next);
 });
+
+// update character goals to include goal resolution
+router.put('/characters/goals', function(req, res, next){
+  var characters = req.body.characters;
+
+  var charPromises = characters.map(function(character){
+    console.log(character)
+    return Character.findByIdAndUpdate(character._id)
+    .then(function(foundChar){
+      foundChar.goals = character.goals;
+      return foundChar.save();
+    })
+  });
+  
+  Promise.all(charPromises)
+  .then(function(resolvedArray){
+    res.send(resolvedArray);
+  }).then(null, next)
+});
+
 
 // get events from game
 // GET /api/gameBuilder/:gameId/events

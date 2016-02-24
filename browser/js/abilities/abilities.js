@@ -16,11 +16,15 @@ app.config(function($stateProvider) {
 
 // The $firebaseArray dependency is more useful for managing collections
 // (of messages for example).
-app.controller('AbilitiesController', function($scope, $firebaseArray, $firebaseObject, character, game) {
-
+app.controller('AbilitiesController', function($scope, $firebaseArray, $firebaseObject, character, game, $stateParams, eventFactory) {
+  $scope.gameId = $stateParams.gameId;
   $scope.game = game;
   $scope.character = character;
+  $scope.triggerEvent = function(gameId, eventId){
+    return eventFactory.triggerEvent(gameId, eventId)
+    .then(null, console.log);
 
+  }
   var gameRef = new Firebase('https://character-test.firebaseio.com/');
   var AbilitiesRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/abilities');
   var LimitationsRef = new Firebase('https://character-test.firebaseio.com/games/' + game.$id + '/characters/' + $scope.character.$id + '/limitations');

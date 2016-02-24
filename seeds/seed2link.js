@@ -34,7 +34,7 @@ var connectEvents = function() {
         event.decision.willResolve = matchingEvent._id;
         console.log("WILL RESOLVE NOW IS", event.decision.willResolve);
 
-        event.save();
+        return event.save();
       })
     });
       // console.log("GOT INTO FOR EACH");
@@ -54,7 +54,8 @@ var connectEvents = function() {
 connectToDb.then(function () {
     connectEvents()
       .then(function(linkedEvents){
-        console.log(linkedEvents);
+        process.kill(0);
+        // console.log(linkedEvents);
       })
 
 });

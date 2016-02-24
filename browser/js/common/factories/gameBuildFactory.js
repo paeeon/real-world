@@ -26,6 +26,14 @@ app.factory('gameBuildFactory', function($http) {
           return res.data;
         });
     },
+    updateCharacterGoals: function(characters){
+      return $http.put('/api/gameBuilder/characters/goals', {
+          characters:characters
+        })
+        .then(function(res){
+          return res.data;
+        })
+    },
     pushEventToGame: function(gameId, eventId) {
       return $http.put('/api/gameBuilder/gameInfo/' + gameId + '/events', {
           _id: eventId

@@ -20,7 +20,7 @@ name in the environment files.
 var mongoose = require('mongoose');
 var Promise = require('bluebird');
 var chalk = require('chalk');
-var connectToDb = require('./server/db');
+var connectToDb = require('../server/db');
 var User = Promise.promisifyAll(mongoose.model('User'));
 var Event = Promise.promisifyAll(mongoose.model('Event'));
 var Character = Promise.promisifyAll(mongoose.model('Character'));

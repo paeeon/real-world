@@ -1,3 +1,27 @@
+var resolveAllCharacters = require('./resolution')
+
+var eventHandler = {
+  // pushes the most recent message to a characters firebase message array
+  // which will be displayed on the characters dashboard
+  text: function(gameId, textEvent) {
+    if (textEvent.needsResolution) {
+      return resolveEvent(gameId, textEvent);
+    }
+    else if (textEvent.endsGame.toString() === "true") {
+      return resolveAllCharacters(gameId);
+    } //investigate this further
+    else {
+      return textEvents(gameId, textEvent);
+    } //investigate this further
+  },
+  // pushes a choice to the characters decisions firebase array
+  // which will be displayed on the characters dashboard
+  choice: function(gameId, choiceEvent) {
+    return choiceEvents(gameId, choiceEvent);
+  }
+};
+
+
 function idFix(game) {
     // For each key in game…
     for (var key in game) {
@@ -11,25 +35,6 @@ function idFix(game) {
         }
     };
 }
-
-var eventHandler = {
-  // pushes the most recent message to a characters firebase message array
-  // which will be displayed on the characters dashboard
-  text: function(gameId, textEvent) {
-    if (textEvent.needsResolution) {
-      return resolveEvent(gameId, textEvent);
-    } //investigate this further
-    else {
-      return textEvents(gameId, textEvent);
-    } //investigate this further
-  },
-  // pushes a choice to the characters decisions firebase array
-  // which will be displayed on the characters dashboard
-  choice: function(gameId, choiceEvent) {
-    return choiceEvents(gameId, choiceEvent);
-  }
-};
-
 
 // helper function
 function choiceEvents(gameId, choiceEvent) {
@@ -83,10 +88,65 @@ function invokeEvent(gameId, currentEvent) {
   });
 }
 
+function eventNest(currentEvent, eventTriggeredArr, gameId, idx) {
+  // if the event is triggered by an event
+  // remove it from event triggered array
+  if (idx) {
+    eventTriggeredArr.splice(idx, 1);
+  }
+  // if the event will trigger another event
+  if (currentEvent.willTrigger) {
+    var eventIdx;
+    // find the event that it triggers
+    var eventToTrigger = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.willTrigger) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for triggered event
+    setTimeout(function () {
+      // run eventNest with the triggered event on timeout
+      eventNest(eventToTrigger, eventTriggeredArr, gameId, eventIdx);
+    }, eventToTrigger.timed.timeout * 60 * 1000); //uncomment when not testing
+    // }, eventToTrigger.timed.timeout);
+  }
+  // if this event will resolve another event
+  else if (currentEvent.decision.willResolve) {
+    var eventIdx;
+    // find the event that it resolves
+    var eventToResolve = eventTriggeredArr.filter(function(event, i) {
+      if (event._id == currentEvent.decision.willResolve) {
+        eventIdx = i;
+        return true;
+      }
+      else {
+        return false;
+      }
+    })[0];
+    // send current event to game on firebase
+    invokeEvent(gameId, currentEvent);
+    // set timeout for event to be resolved
+    setTimeout(function () {
+      // run eventNest with the event that needs to be resolved
+      eventNest(eventToResolve, eventTriggeredArr, gameId, eventIdx);
+    }, eventToResolve.timed.timeout * 60 * 1000); //uncomment when not testing
+    // }, eventToResolve.timed.timeout);
+  } else {
+    return invokeEvent(gameId, currentEvent);
+  }
+
+}
 
 module.exports = {
     idFix: idFix,
     eventHandler: eventHandler,
     resolveEvent:resolveEvent,
-    invokeEvent:invokeEvent
+    invokeEvent:invokeEvent,
+    eventNest:eventNest
 }

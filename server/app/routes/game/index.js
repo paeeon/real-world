@@ -21,7 +21,7 @@ var games = {};
 var gameStarted = {};
 // var myFirebaseRef = new Firebase("https://flickering-inferno-4436.firebaseio.com/");
 var myFirebaseRef = new Firebase("https://character-test.firebaseio.com/");
-var game, characters, gameID, gameRef, randomShortId, startTime;
+var characters, gameID, gameRef, randomShortId, startTime;
 var gameShortIdConverter = {};
 // gameID = "-K9hE8L_Y2NAxvi8x06R";
 // gameRef = myFirebaseRef.child('games').child(gameID);

@@ -35,7 +35,9 @@ app.controller('buildEventCtrl', function($scope, $stateParams, $state, characte
   $scope.characters = characters;
   $scope.cloneLists = [];
 
+  $scope.eventTitleDescription = "A brief summary of the event. Players won't see this - its sole purpose is to help you organize your events.";
   $scope.eventTypeDescription = "A Text event is just a message that a user receives. A Choice event is a message that also prompts the user to vote – users will receive a set of choices to pick one, and they'll be able to submit one choice.";
+  $scope.eventMessageDescription = "Add the word PLACEHOLDER (in all caps) anywhere in your message and it will be replaced by the result of a vote event. Note that you must also nest this event inside of the corresponding vote event on the next Gamebuilder step.";
 
   // Add an effect for this event. Each effect will act as its own
   // "event" in the game

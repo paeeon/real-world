@@ -1,59 +1,63 @@
 var gamesRef = new Firebase("https://character-test.firebaseio.com/games/");
+// when a new game is added a listener is deployed for that game
 gamesRef.on('child_added', function(dataSnapshot) {
   var gameId = dataSnapshot.key();
   var gameRef = gamesRef.child(gameId);
   var voteRef = gameRef.child('votes');
-  var mongoose = require('mongoose');
-  var Event = mongoose.model('Event');
-  voteRef.on('child_changed', function(childSnapshot, prevChildKey) {
-    var eventHandler = require('./index').eventHandler;
-    var currentVote = childSnapshot.val();
-    var parentRef = voteRef.child(childSnapshot.key());
-    var votes = {};
-
-    Event.findById(parentRef.key()).exec()
-    .then(function(currentEvent) {
-      if (childSnapshot.numChildren()-1 === currentEvent.targets.length) {
-        // var parent;
-        // parentRef.once('value', function(parentSnap){
-        //   parent = parentSnap.val();
-        // });
-        childSnapshot.forEach(function(snapshot) {
-          if (snapshot.val().choice){
-            var vote = snapshot.val();
-            if (!votes[vote.choice]) {
-              votes[vote.choice] = vote;
-              votes[vote.choice].count = 1;
-            } else {
-              votes[vote.choice].count++;
-            }
-          }
-        });
-      }
-      var winningVote = {max:0};
-      Object.keys(votes).forEach(function(vote) {
-        if (!winningVote.winner) {
-          winningVote.winner = vote;
+// Deploy a listener for changes to the games choice event
+  voteRef.on('child_changed', function(voteSnapshot, prevChildKey) {
+    var eventHandler = require('./gameHelper').eventHandler;
+// Set current vote equal to the snapshot of the vote
+    var currentVote = voteSnapshot.val();
+    var parentRef = voteRef.child(voteSnapshot.key());
+    if (voteSnapshot.numChildren()-1 === currentVote.targets.length) {
+// Grab event info from firebase if we have the appropriate number of votes
+      gameRef.child('events').child(parentRef.key()).once('value', function(dataSnapshot){
+        var currentEvent = dataSnapshot.val();
+// Call our vote counting function
+        var winningVote = countVotes(voteSnapshot);
+        if (currentEvent.decision.willResolve) {
+// Post the winner of the vote event to the resolve table so it can be retreived when needed
+          gameRef.child('resolveTable')
+            .child(currentEvent.decision.willResolve.toString())
+            .set(winningVote); 
         }
-        else {
-          //i have no clue what the hell this is doing
-          if (winningVote.max < votes[vote].count) { //need to grab vote.count
-            winningVote.winner = vote;
-            winningVote.max = votes[vote].count;
-          }
+        if (currentEvent.willTrigger){
+// if this event needs to trigger another event directly it will find it and invoke the event using the event handler
+          gameRef.child('events').child(willTrigger.toString())
+          .once(value, function(toTriggerSnapshot){
+            var eventToTrigger = toTriggerSnapshot.val();
+            eventHandler[eventToTrigger.type](gameId, eventToTrigger)
+          })
         }
-      });
-      if (currentEvent.decision.willResolve) {
-        //input winningVote.winner
-        gameRef.child('resolveTable').child(currentEvent.decision.willResolve.toString()).set(winningVote.winner); 
-        //need to make this asynchronous (.THEN OFF OF IT) --might be okay
-      }
-      return votes[winningVote.winner].willTrigger;
-    }).then(function(toTrigger) {
-      return Event.findById(toTrigger).exec();
-    }).then(function(eventToTrigger) {
-      eventHandler[eventToTrigger.type](gameId, eventToTrigger);
-
-    }).then(null, console.log);
+      })
+    }
   });
 });
+
+// We are using the firebase forEach method since snapshots of firebase arrays are 
+// not actually arrays or even array like objects. We'll loop through the votes
+// counting them and comparing them to the lead vote getter, then return
+// the string of the winning vote
+
+function countVotes(voteSnapshot){
+  var votes = {};
+  var leadingVote = 0;
+  var winningVote;
+  voteSnapshot.forEach(function(snapshot) {
+    if (snapshot.val().choice){
+      var vote = snapshot.val();
+      if (!votes[vote.choice]) {
+        votes[vote.choice] = vote;
+        votes[vote.choice].count = 1;
+      } else {
+        votes[vote.choice].count++;
+      }
+      if(votes[vote.choice].count > leadingVote) {
+        leadingVote = votes[vote.choice].count;
+        winningVote = vote.choice;
+      }
+    }
+  });
+  return winningVote;
+}

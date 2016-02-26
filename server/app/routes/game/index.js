@@ -12,7 +12,9 @@ var eventHandler = gameHelper.eventHandler;
 var invokeEvent = gameHelper.invokeEvent;
 var eventNest = gameHelper.eventNest;
 var idFix = gameHelper.idFix;
+// var BinarySearchTree = require('binary-search-tree').BinarySearchTree
 
+// var gamesBst = new BinarySearchTree;
 
 router.get('/', function(req, res, next) {
   Game.find({})
@@ -109,7 +111,7 @@ var startTimed = function(gameId) {
   });
 
   // console.log("Timed array", timed);
-  console.log("EventTriggered array", eventTriggered);
+  // console.log("EventTriggered array", eventTriggered);
 
   // Organize the events in the timed array, in order from latest to the soonest
   timed.sort(function(a, b) {
@@ -196,7 +198,6 @@ router.post('/game/:gameId/event/:eventId', function(req, res, next) {
 require('./vote-listening.js')
 module.exports = {
   router: router,
-  eventHandler: eventHandler,
   invokeEvent: invokeEvent
 };
 

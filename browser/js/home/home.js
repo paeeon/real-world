@@ -1,6 +1,6 @@
 app.config(function($stateProvider) {
   $stateProvider.state('home', {
-    url: '/',
+    url: '/play',
     templateUrl: 'js/home/home.html',
     controller: 'HomeController'
   });

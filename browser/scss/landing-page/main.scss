@@ -4,11 +4,14 @@ nav {
   &.navbar-default {
     border-bottom: 0px;
   }
-  .logo {
-    img {
-      vertical-align: text-bottom;
-      height: 25px;
-    }
+  .logo-area {
+    display: flex;
+    align-items: center;
+  }
+  img.logo-img {
+    height: 25px;
+  }
+  a.logo-text {
     font-family: $font-stack;
     font-weight: 700;
     letter-spacing: -1px;
@@ -21,10 +24,15 @@ nav {
       text-decoration: none;
     }
   }
+  .nav-links-area {
+    height: 100%;
+  }
   ul.nav-links {
-    padding-top: 5px;
+    padding-top: 4px;
+    margin-bottom: 0;
     float: right;
     list-style-type: none;
+    -webkit-padding-start: 0px;
     li {
       display: inline-block;
       padding-left: 20px;
@@ -43,6 +51,11 @@ nav {
       &:hover {
         border-bottom: 1px solid $dark-grey;
       }
+    }
+  }
+  @media all and (max-width: 399px) {
+    a.logo-text {
+      display: none;
     }
   }
 }
@@ -110,9 +123,22 @@ nav {
   }
   #about-real-world {
     background-color: white;
-    iframe {
-      display: block;
+    .embed-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
       margin: 0 auto;
+    }
+    .embed-container iframe,
+    .embed-container object,
+    .embed-container embed {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
     .about-title {
       color: $dark-blue;

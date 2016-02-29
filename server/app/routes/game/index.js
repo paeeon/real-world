@@ -69,8 +69,8 @@ router.get('/build/:instructionId', function(req, res, next) {
       game.resolveTable = resolve;
       characters = _.shuffle(game.characters);
       idFix(game);
-      var gameRef = myFirebaseRef.child('games').push(game);
-      var gameID = gameRef.key();
+      gameRef = myFirebaseRef.child('games').push(game);
+      gameID = gameRef.key();
       games[gameID] = game;
       gameStarted[gameID] = false;
       // gameRef.once("value", function(data) {
@@ -81,12 +81,13 @@ router.get('/build/:instructionId', function(req, res, next) {
         pool: 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789'
       });
       gameShortIdConverter[randomShortId] = gameID;
-      myFirebaseRef.child('games')
+      return myFirebaseRef.child('games')
         .child("gameShortIdConverter")
         .update(gameShortIdConverter);
-      gameShortIdConverter = {};
-      res.json(gameID);
-    }).then(null, console.log);
+    })
+    .then(function(){
+        res.json(gameID);
+      }).then(null, console.log);
 });
 
 

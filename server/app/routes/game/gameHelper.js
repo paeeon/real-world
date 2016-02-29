@@ -26,7 +26,7 @@ function idFix(game) {
     // For each key in game…
     for (var key in game) {
         // If the key is __id, set its value to a toString-ified version of itself
-        if (key === "_id") {
+        if (key === "_id" || key === "willResolve") {
             game[key] = game[key].toString();
             // If the value of a key is an object, perform idFix on that object.
         } else if (typeof game[key] === 'object') {

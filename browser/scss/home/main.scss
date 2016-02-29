@@ -1,1 +1,7 @@
+@import '../variables';
 
+@media all and (max-width: 769px) {
+  .play-warning {
+    display: none;
+  }
+}
